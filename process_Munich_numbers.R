@@ -120,3 +120,36 @@ View( dsCor[,col_has_over_90] )
 
 library(corrr)
 correlate(dsFinal, use = "pairwise.complete.obs")
+
+
+dsFinal %>% 
+  correlate(use = "pairwise.complete.obs") %>% 
+  focus(3:5, mirror = TRUE) %>% 
+  network_plot()
+
+
+any_over_90 <- function(x) any(x > .95, na.rm = TRUE)
+dsFinal %>% select_if(any_over_90)
+
+dsFinal %>% 
+  correlate(use = "pairwise.complete.obs") %>% 
+  stretch() %>% 
+  filter(abs(r)>0.98)
+
+dsFinal %>% 
+  correlate(use = "pairwise.complete.obs") %>% 
+  stretch() %>% 
+  filter(abs(r)>0.95) %>%
+  group_by(x) %>%
+  count() %>% 
+  arrange(-n)
+
+
+dsFinal %>% 
+  correlate(use = "pairwise.complete.obs") %>% 
+  stretch() %>% 
+  filter(abs(r)>0.95) %>%
+  separate(x, into = c("x_sec", "subsection"), sep = " - ") %>%
+  separate(y, into = c("y_sec", "subsection"), sep = " - ") -> dsAgg
+
+ ( table(dsAgg$x_sec, dsAgg$y_sec) )
