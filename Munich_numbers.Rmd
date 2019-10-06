@@ -1,0 +1,355 @@
+---
+title: "Munich_numbers"
+author: "CU"
+date: "10/6/2019"
+output: rmarkdown::github_document
+---
+
+```{r setup, include=FALSE}
+
+library(knitr)         # markdown enhancements
+library(kableExtra)    # nice rmarkdown tables
+library(RCurl)         # download data
+library(readxl)        # read Excel
+library(tidyverse)     # tidyverse universe (dplyr, ggplot ...)
+
+
+knitr::opts_chunk$set(echo = TRUE)
+##########################
+# preparations
+rm(list=ls())
+gc()
+
+# url
+url = 'http://www.mstatistik-muenchen.de/monatszahlenmonitoring/export/xlsx/mzm_export_alle_monatszahlen.xlsx'
+destExcelFile = "file.xlsx"
+
+download.file(url = url,
+              destfile=destExcelFile,
+              method="libcurl",
+              mode = "wb")
+
+path = destExcelFile
+dat <- path %>% 
+  excel_sheets() %>% 
+  set_names() %>% 
+  map(read_excel, path = path)
+
+rm(path, destExcelFile, url)
+##########################
+```
+
+## Munich Numbers - exploratory analysis
+
+This is a brief EDA of Munich stats.
+
+## Data Source
+Thanks to **Statistische Amt München** for making the data available on a monthly basis. They make way more data available, these are solely main KPIs. Source of data: <http://www.mstatistik-muenchen.de/monatszahlenmonitoring/export/export.php>. Official Data exploration portal: <http://www.mstatistik-muenchen.de/monatszahlenmonitoring/atlas.html?indicator=i158&date=Jan&select=20,19&select2=JAHR&indicator2=i0>
+
+Data source in Excel, processed here into data.frames and correlation charts
+
+# Cinema visitors (monthly trends)
+
+```{r charts_kinos}
+##########################
+# exploratory charts
+dat$KINOS %>%
+  select(MONATSZAHL) %>%
+  table()
+
+dat$KINOS %>%
+  mutate(Month = as.Date(paste0(MONAT,'01'), format = '%Y%m%d')) %>%
+  ggplot(., aes(x=Month, y = WERT, group=AUSPRAEGUNG)) + 
+    geom_line() + 
+    facet_wrap(~AUSPRAEGUNG) +
+    theme_classic()+ 
+    geom_smooth() + scale_y_continuous(labels = scales::comma) + ggtitle("monthly trend - Cinema Visitors")
+#ggsave("monthly trend - Cinema Visitors.png", dpi=400, dev='png', height=4, width=5, units="in", scale = 2)
+```
+
+# weather trends
+
+```{r charts_weather}
+dat$WITTERUNG %>%
+  filter(MONATSZAHL %in% c("Sonnenschein", "Lufttemperatur")) %>%
+  mutate(Month = as.Date(paste0(MONAT,'01'), format = '%Y%m%d')) %>%
+  ggplot(., aes(x=Month, y = WERT, group=AUSPRAEGUNG)) + 
+  geom_line() + 
+  facet_wrap(~AUSPRAEGUNG, scales = "free") +
+  theme_classic()+ 
+  geom_smooth() + scale_y_continuous(labels = scales::comma) + ggtitle("monthly weather trends")
+#ggsave("monthly weather trends.png", dpi=400, dev='png', height=4, width=5, units="in", scale = 2)
+```
+
+# Tourist trends
+
+```{r charts_tourism}
+dat$TOURISMUS %>%
+  filter(MONATSZAHL %in% c("Gäste")) %>%
+  mutate(Month = as.Date(paste0(MONAT,'01'), format = '%Y%m%d')) %>%
+  ggplot(., aes(x=Month, y = WERT, group=AUSPRAEGUNG)) + 
+  geom_line() + 
+  facet_wrap(~AUSPRAEGUNG, scales = "free") +
+  theme_classic()+ 
+  geom_smooth() + scale_y_continuous(labels = scales::comma) + ggtitle("monthly trend - Turist guests")
+#ggsave("monthly trend - Turist guests.png", dpi=400, dev='png', height=4, width=5, units="in", scale = 2)
+```
+
+# Population trends
+
+## inhabitants (all + gender)
+
+```{r charts_population_all}
+dat$BEVÖLKERUNG %>%
+  filter(MONATSZAHL %in% c("Geschlecht und Staatsangehörigkeit")) %>%
+  filter(str_detect(AUSPRAEGUNG, 'Einwohner')) %>%
+  mutate(Month = as.Date(paste0(MONAT,'01'), format = '%Y%m%d')) %>%
+  ggplot(., aes(x=Month, y = WERT, group=AUSPRAEGUNG)) + 
+  geom_line() + 
+  facet_wrap(~AUSPRAEGUNG) +
+  theme_classic()+ 
+  scale_y_continuous(labels = scales::comma) + ggtitle("Munich Inhabitants (male, female, all)")
+```
+
+## German inhabitants (all + gender)
+
+```{r charts_population_german}
+dat$BEVÖLKERUNG %>%
+  filter(MONATSZAHL %in% c("Geschlecht und Staatsangehörigkeit")) %>%
+  filter(str_detect(AUSPRAEGUNG, 'Deutsche')) %>%
+  mutate(Month = as.Date(paste0(MONAT,'01'), format = '%Y%m%d')) %>%
+  ggplot(., aes(x=Month, y = WERT, group=AUSPRAEGUNG)) + 
+  geom_line() + 
+  facet_wrap(~AUSPRAEGUNG) +
+  theme_classic()+ 
+  scale_y_continuous(labels = scales::comma) + ggtitle("Germans in Munich (male, female, all)")
+```
+
+## Foreign inhabitants (all + gender)
+
+```{r charts_population_foreign}
+dat$BEVÖLKERUNG %>%
+  filter(MONATSZAHL %in% c("Geschlecht und Staatsangehörigkeit")) %>%
+  filter(str_detect(AUSPRAEGUNG, 'Ausländer')) %>%
+  mutate(Month = as.Date(paste0(MONAT,'01'), format = '%Y%m%d')) %>%
+  ggplot(., aes(x=Month, y = WERT, group=AUSPRAEGUNG)) + 
+  geom_line() + 
+  facet_wrap(~AUSPRAEGUNG) +
+  theme_classic()+ 
+  scale_y_continuous(labels = scales::comma) + ggtitle("Foreigners in Munich (male, female, all)")
+```
+
+## Family status
+
+```{r charts_population}
+dat$BEVÖLKERUNG %>%
+  filter(MONATSZAHL %in% c("Familienstand")) %>%
+  mutate(Month = as.Date(paste0(MONAT,'01'), format = '%Y%m%d')) %>%
+  ggplot(., aes(x=Month, y = WERT, group=AUSPRAEGUNG)) + 
+  geom_line() + 
+  facet_wrap(~AUSPRAEGUNG, scales = "free") +
+  theme_classic()+ 
+  scale_y_continuous(labels = scales::comma) + ggtitle("monthly trend - population by family status")
+#ggsave("monthly trend - population by family status.png", dpi=400, dev='png', height=4, width=5, units="in", scale = 2)
+```
+
+## Age groups
+
+```{r charts_population_by_age}
+dat$BEVÖLKERUNG %>%
+    filter(MONATSZAHL %in% c("Altersgruppen")) %>%
+    mutate(Month = as.Date(paste0(MONAT,'01'), format = '%Y%m%d')) %>%
+    ggplot(., aes(x=Month, y = WERT, group=AUSPRAEGUNG)) + 
+    geom_line() + 
+    facet_wrap(~AUSPRAEGUNG, scales = "free") +
+    theme_classic()+ 
+    geom_smooth() + scale_y_continuous(labels = scales::comma) + ggtitle("Population by age group")
+```
+
+## Religion
+
+```{r charts_population_religion}
+dat$BEVÖLKERUNG %>%
+    filter(MONATSZAHL %in% c("Religionszugehörigkeit")) %>%
+    mutate(Month = as.Date(paste0(MONAT,'01'), format = '%Y%m%d')) %>%
+    ggplot(., aes(x=Month, y = WERT, group=AUSPRAEGUNG)) + 
+    geom_line() + 
+    facet_wrap(~AUSPRAEGUNG, scales = "free") +
+    theme_classic()+ 
+    geom_smooth() + scale_y_continuous(labels = scales::comma) + ggtitle("Religion in Munich")
+```
+
+
+# Compressing data
+We'll now compress the **original disparated data** in one compact data.frame
+For that, we create dynamic column names and aggregate the monthly values
+The final result will be a large matrix (~300 columns) where each column represents a variable and the rows are the monthly values (20 yrs x 12 months)
+
+
+```{r prepare_large_aggregation, warning=FALSE}
+##########################
+# looping through all the Excel sheets
+dsFinal <- data.frame()
+for (i in 1:length(names(dat))) {
+  SECTIONNAME <- names(dat)[i]
+  dtmp <- (dat[SECTIONNAME])[[1]]
+  # if the current section has values in it
+  if ('WERT' %in% names(dtmp)) {
+    # creating dynamic column names and assign monthly values as cols
+    dtmp_mo <- dtmp %>%
+      select(MONATSZAHL, AUSPRAEGUNG, MONAT, WERT) %>%
+      mutate(colname=paste(SECTIONNAME, MONATSZAHL, AUSPRAEGUNG, sep = " - ")) %>%
+      select(MONAT, colname, WERT) %>%
+      spread(MONAT, WERT) 
+    rownames(dtmp_mo) <- dtmp_mo$colname
+    dtmp_mo$colname <- NULL
+    # transpose monthly values to rows
+    dtmp_mo <- t(dtmp_mo)
+    # back from tibble to dataframe
+    dtmp_mo <-as.data.frame(dtmp_mo)
+    dtmp_mo$month <- rownames(dtmp_mo)
+    
+    if (nrow(dsFinal)==0){
+      # if the final construct doesn't exist, simply create it
+      dsFinal <- dtmp_mo
+    } else {
+      # if we have values in it already, merge them (full join)  using the month column
+      dsFinal <- dtmp_mo %>%
+        full_join(dsFinal, by = "month")
+    }
+  }
+}
+# cleanup
+rm(dtmp, dtmp_mo, i, SECTIONNAME)
+
+rownames(dsFinal) <- dsFinal$month
+dsFinal$month <- NULL
+dim(dsFinal)
+dsFinal[1:10,1:2] %>% kable()
+#str(dsFinal)
+##########################
+```
+
+# Counting NAs
+
+```{r prepare_count_of_NAs}
+
+##########################
+# count NAs
+# absolute number of missing values
+nasCount <- dsFinal %>%
+  summarise_all(funs(sum(is.na(.))))
+# relative count
+nasCount <- nasCount/nrow(dsFinal)
+# transpose percent of missing values
+nasCount <- as.data.frame(t(nasCount))
+nasCount$field <- rownames(nasCount)
+names(nasCount) <- c('NAs_proc', 'field_name')
+# done
+head(nasCount) %>% kable()
+nasFinal <- data.frame("field_name" =  nasCount$field_name, "NAs_proc" = nasCount$NAs_proc)
+plot(nasFinal$NAs_proc, main="Percent of missing values for all variables")
+abline(h=0.1, col="blue")
+rm(nasCount)
+##########################
+```
+we will **cut all variables filled below 10%** (so all above the blue line).
+
+
+# Explore correlations
+## simple use of cor()
+
+```{r prepare_correlation_cor}
+##########################
+# explore correlation
+dsCor <- cor(dsFinal, use = "pairwise.complete.obs")
+
+dsCor[1:5, 1:5]
+
+# explore correlations with R https://drsimonj.svbtle.com/exploring-correlations-in-r-with-corrr
+diag(dsCor) <- NA
+col_has_over_90 <- apply(dsCor, 2, function(x) any(x > .9))
+
+length(col_has_over_90)
+
+#( dsCor[,col_has_over_90] )
+
+```
+
+## the correlate package
+
+```{r prepare_correlation_corrr, warning=FALSE}
+
+library(corrr)
+correlate(dsFinal, use = "pairwise.complete.obs")
+
+# dsFinal %>% 
+#   correlate(use = "pairwise.complete.obs") %>% 
+#   focus(3:5, mirror = TRUE) %>% 
+#   network_plot()
+
+# above 98% pearson correlation
+dsFinal %>% 
+  correlate(use = "pairwise.complete.obs") %>% 
+  stretch() %>% 
+  filter(abs(r)>0.98) %>% 
+  head(20)
+
+# how many does each correlate with
+dsFinal %>% 
+  correlate(use = "pairwise.complete.obs") %>% 
+  stretch() %>% 
+  filter(abs(r)>0.98) %>%
+  group_by(x) %>%
+  count() %>% 
+  arrange(-n) %>% 
+  head(20)
+
+# split the correlated variables by section/subsections
+dsFinal %>% 
+  correlate(use = "pairwise.complete.obs") %>% 
+  stretch() %>% 
+  filter(abs(r)>0.98) %>%
+  mutate(x_field = x, y_field = y) %>%
+  separate(x, into = c("x_sec", "x_subsection", "x_subsubsection"), sep = " - ") %>%
+  separate(y, into = c("y_sec", "y_subsection", "y_subsubsection"), sep = " - ") %>%
+  filter(x_sec!=y_sec)-> dsAgg
+
+# main correlated sections
+( table(dsAgg$x_sec, dsAgg$y_sec) )
+
+dsAgg %>%
+  inner_join(nasFinal, by = c("x_field"="field_name")) %>%
+  filter(NAs_proc <0.1) %>%
+  select(x_field, y_field, r, NAs_proc) -> dsAggFiltered
+(dsAggFiltered)
+##########################
+```
+
+# Next steps
+
+- we look at cross-topic correlations (assuming that inter-topic correlations are logical: highest to lowest temperature f.e.)
+- explore some highly correlated numbers
+- **BEWARE OF CONFOUNDING VARIABLES**
+
+# Highly Correlated variables
+These are pure sample examples out of  ~100
+
+```{r prepare_correlation_charts, warning=FALSE}
+plot(dsFinal$`BEVÖLKERUNG - Altersgruppen - Rentner/innen (65 J. und älter)`, dsFinal$`SOZIALE LEISTUNGEN - Empfänger nach SGB XII - Empfänger/innen insges.`,
+     main="Old-age pensioner and social welfare recipients")
+plot(dsFinal$`BEVÖLKERUNG - Familienstand - geschieden`, dsFinal$`KFZ-Bestand - Pkw-Kraftstoffarten - Diesel gesamt`,
+     main="Divorces and Diesel cars")
+```
+
+# linear models
+Handworkers by number of diesel cars and total population
+
+```{r prepare_linear_models, warning=FALSE}
+model.lm <- lm(`WIRTSCHAFT - Handwerksbetriebe - Handwerk f. den priv. Bedarf` ~ `KFZ-Bestand - Pkw-Kraftstoffarten - Diesel gesamt` + `BEVÖLKERUNG - Geschlecht und Staatsangehörigkeit - Einwohner/innen insgesamt`, data = dsFinal)
+summary(model.lm)
+plot(model.lm)
+```
+
+
+:)
