@@ -9,7 +9,7 @@ This is a brief EDA of Munich stats.
 
 ## Data Source
 
-Thanks to **Statistische Amt MÃ¼nchen** for making the data available on
+Thanks to **Statistische Amt München** for making the data available on
 a monthly basis. They make way more data available, these are solely
 main KPIs. Source of data:
 <http://www.mstatistik-muenchen.de/monatszahlenmonitoring/export/export.php>.
@@ -76,7 +76,7 @@ dat$WITTERUNG %>%
 
 ``` r
 dat$TOURISMUS %>%
-  filter(MONATSZAHL %in% c("GÃ¤ste")) %>%
+  filter(MONATSZAHL %in% c("Gäste")) %>%
   mutate(Month = as.Date(paste0(MONAT,'01'), format = '%Y%m%d')) %>%
   ggplot(., aes(x=Month, y = WERT, group=AUSPRAEGUNG)) + 
   geom_line() + 
@@ -98,8 +98,8 @@ dat$TOURISMUS %>%
 ## Inhabitants (all & gender)
 
 ``` r
-dat$BEVÃ–LKERUNG %>%
-  filter(MONATSZAHL %in% c("Geschlecht und StaatsangehÃ¶rigkeit")) %>%
+dat$BEVÖLKERUNG %>%
+  filter(MONATSZAHL %in% c("Geschlecht und Staatsangehörigkeit")) %>%
   filter(str_detect(AUSPRAEGUNG, 'Einwohner')) %>%
   mutate(Month = as.Date(paste0(MONAT,'01'), format = '%Y%m%d')) %>%
   arrange(-WERT) %>% # sort
@@ -126,8 +126,8 @@ dat$BEVÃ–LKERUNG %>%
 ## German inhabitants (all & gender)
 
 ``` r
-dat$BEVÃ–LKERUNG %>%
-  filter(MONATSZAHL %in% c("Geschlecht und StaatsangehÃ¶rigkeit")) %>%
+dat$BEVÖLKERUNG %>%
+  filter(MONATSZAHL %in% c("Geschlecht und Staatsangehörigkeit")) %>%
   filter(str_detect(AUSPRAEGUNG, 'Deutsche')) %>%
   mutate(Month = as.Date(paste0(MONAT,'01'), format = '%Y%m%d')) %>%
   arrange(-WERT) %>% # sort
@@ -144,9 +144,9 @@ dat$BEVÃ–LKERUNG %>%
 ## Foreign inhabitants (all & gender)
 
 ``` r
-dat$BEVÃ–LKERUNG %>%
-  filter(MONATSZAHL %in% c("Geschlecht und StaatsangehÃ¶rigkeit")) %>%
-  filter(str_detect(AUSPRAEGUNG, 'AuslÃ¤nder')) %>%
+dat$BEVÖLKERUNG %>%
+  filter(MONATSZAHL %in% c("Geschlecht und Staatsangehörigkeit")) %>%
+  filter(str_detect(AUSPRAEGUNG, 'Ausländer')) %>%
   mutate(Month = as.Date(paste0(MONAT,'01'), format = '%Y%m%d')) %>%
   arrange(-WERT) %>% # sort
   mutate_at(vars(AUSPRAEGUNG), funs(factor(., levels=unique(.)))) %>% # convert to factor
@@ -162,7 +162,7 @@ dat$BEVÃ–LKERUNG %>%
 ## Family status
 
 ``` r
-dat$BEVÃ–LKERUNG %>%
+dat$BEVÖLKERUNG %>%
   filter(MONATSZAHL %in% c("Familienstand")) %>%
   mutate(Month = as.Date(paste0(MONAT,'01'), format = '%Y%m%d')) %>%
   arrange(-WERT) %>% # sort
@@ -183,7 +183,7 @@ dat$BEVÃ–LKERUNG %>%
 ## Age groups
 
 ``` r
-dat$BEVÃ–LKERUNG %>%
+dat$BEVÖLKERUNG %>%
     filter(MONATSZAHL %in% c("Altersgruppen")) %>%
     mutate(Month = as.Date(paste0(MONAT,'01'), format = '%Y%m%d')) %>%
     arrange(-WERT) %>% # sort
@@ -202,8 +202,8 @@ dat$BEVÃ–LKERUNG %>%
 ## Religion
 
 ``` r
-dat$BEVÃ–LKERUNG %>%
-    filter(MONATSZAHL %in% c("ReligionszugehÃ¶rigkeit")) %>%
+dat$BEVÖLKERUNG %>%
+    filter(MONATSZAHL %in% c("Religionszugehörigkeit")) %>%
     mutate(Month = as.Date(paste0(MONAT,'01'), format = '%Y%m%d')) %>%
     ggplot(., aes(x=Month, y = WERT, group=AUSPRAEGUNG)) + 
     geom_line() + 
@@ -223,7 +223,7 @@ dat$BEVÃ–LKERUNG %>%
 ``` r
 dat$ARBEITSMARKT %>%
   filter(MONATSZAHL %in% c("Arbeitslose")) %>%
-  filter(AUSPRAEGUNG %in% c("insgesamt","Frauen","MÃ¤nner","Deutsche","Deutsche", "AuslÃ¤nder/innen", "Langzeitarbeitslose")) %>%
+  filter(AUSPRAEGUNG %in% c("insgesamt","Frauen","Männer","Deutsche","Deutsche", "Ausländer/innen", "Langzeitarbeitslose")) %>%
   mutate(Month = as.Date(paste0(MONAT,'01'), format = '%Y%m%d')) %>%
   arrange(-WERT) %>% # sort
   mutate_at(vars(AUSPRAEGUNG), funs(factor(., levels=unique(.)))) %>% # convert to factor
@@ -256,7 +256,7 @@ dat$ARBEITSMARKT %>%
 
 # Compressing data
 
-Weâ€™ll now compress the **original disparated data** in one compact
+We’ll now compress the **original disparated data** in one compact
 data.frame For that, we create dynamic column names and aggregate the
 monthly values The final result will be a large matrix (\~300 columns)
 where each column represents a variable and the rows are the monthly
@@ -327,7 +327,7 @@ WITTERUNG - Luftfeuchtigkeit - Mittlere relative Luftfeuchtigkeit
 
 <th style="text-align:right;">
 
-WITTERUNG - Lufttemperatur - HÃ¶chste Lufttemperatur
+WITTERUNG - Lufttemperatur - Höchste Lufttemperatur
 
 </th>
 
@@ -566,6 +566,35 @@ WITTERUNG - Lufttemperatur - HÃ¶chste Lufttemperatur
 ##########################
 ```
 
+# Female share
+
+## among german nationals
+
+``` r
+plot(
+    rownames(dsFinal) 
+    , dsFinal$`BEVÖLKERUNG - Geschlecht und Staatsangehörigkeit - Deutsche weiblich`  / dsFinal$`BEVÖLKERUNG - Geschlecht und Staatsangehörigkeit - Deutsche insgesamt`
+    , xlab = "month"
+    , ylab = "% Female"
+     , main="% Female among Germans", 
+    type="o")
+```
+
+![](Munich_numbers_files/figure-gfm/female_share_germans-1.png)<!-- -->
+\#\# among foreigners
+
+``` r
+plot(
+    rownames(dsFinal) 
+    , dsFinal$`BEVÖLKERUNG - Geschlecht und Staatsangehörigkeit - Ausländer weiblich`  / dsFinal$`BEVÖLKERUNG - Geschlecht und Staatsangehörigkeit - Ausländer/innen insgesamt`
+    , xlab = "month"
+    , ylab = "% Female"
+     , main="% Female among Foreigners", 
+    type="o")
+```
+
+![](Munich_numbers_files/figure-gfm/female_share_foreigners-1.png)<!-- -->
+
 # Counting NAs
 
 ``` r
@@ -638,7 +667,7 @@ WITTERUNG - Luftfeuchtigkeit - Mittlere relative Luftfeuchtigkeit
 
 <td style="text-align:left;">
 
-WITTERUNG - Lufttemperatur - HÃ¶chste Lufttemperatur
+WITTERUNG - Lufttemperatur - Höchste Lufttemperatur
 
 </td>
 
@@ -650,7 +679,7 @@ WITTERUNG - Lufttemperatur - HÃ¶chste Lufttemperatur
 
 <td style="text-align:left;">
 
-WITTERUNG - Lufttemperatur - HÃ¶chste Lufttemperatur
+WITTERUNG - Lufttemperatur - Höchste Lufttemperatur
 
 </td>
 
@@ -726,7 +755,7 @@ WITTERUNG - Niederschlag - Niederschlagsmenge insgesamt
 
 <td style="text-align:left;">
 
-WITTERUNG - Niederschlag - Tage mit NiederschlÃ¤gen
+WITTERUNG - Niederschlag - Tage mit Niederschlägen
 
 </td>
 
@@ -739,7 +768,7 @@ WITTERUNG - Niederschlag - Tage mit NiederschlÃ¤gen
 <td style="text-align:left;">
 
 WITTERUNG - Niederschlag - Tage mit
-NiederschlÃ¤gen
+Niederschlägen
 
 </td>
 
@@ -779,31 +808,31 @@ dsCor[1:5, 1:5]
 
     ##                                                                   WITTERUNG - Luftfeuchtigkeit - Mittlere relative Luftfeuchtigkeit
     ## WITTERUNG - Luftfeuchtigkeit - Mittlere relative Luftfeuchtigkeit                                                        1.00000000
-    ## WITTERUNG - Lufttemperatur - HÃ¶chste Lufttemperatur                                                                     -0.64793440
+    ## WITTERUNG - Lufttemperatur - Höchste Lufttemperatur                                                                     -0.64793440
     ## WITTERUNG - Lufttemperatur - Mittlere Lufttemperatur                                                                    -0.62228448
     ## WITTERUNG - Lufttemperatur - Tiefste Lufttemperatur                                                                     -0.51313290
     ## WITTERUNG - Niederschlag - Niederschlagsmenge insgesamt                                                                 -0.08243451
-    ##                                                                   WITTERUNG - Lufttemperatur - HÃ¶chste Lufttemperatur
+    ##                                                                   WITTERUNG - Lufttemperatur - Höchste Lufttemperatur
     ## WITTERUNG - Luftfeuchtigkeit - Mittlere relative Luftfeuchtigkeit                                          -0.6479344
-    ## WITTERUNG - Lufttemperatur - HÃ¶chste Lufttemperatur                                                         1.0000000
+    ## WITTERUNG - Lufttemperatur - Höchste Lufttemperatur                                                         1.0000000
     ## WITTERUNG - Lufttemperatur - Mittlere Lufttemperatur                                                        0.9586386
     ## WITTERUNG - Lufttemperatur - Tiefste Lufttemperatur                                                         0.9037555
     ## WITTERUNG - Niederschlag - Niederschlagsmenge insgesamt                                                     0.4353042
     ##                                                                   WITTERUNG - Lufttemperatur - Mittlere Lufttemperatur
     ## WITTERUNG - Luftfeuchtigkeit - Mittlere relative Luftfeuchtigkeit                                           -0.6222845
-    ## WITTERUNG - Lufttemperatur - HÃ¶chste Lufttemperatur                                                          0.9586386
+    ## WITTERUNG - Lufttemperatur - Höchste Lufttemperatur                                                          0.9586386
     ## WITTERUNG - Lufttemperatur - Mittlere Lufttemperatur                                                         1.0000000
     ## WITTERUNG - Lufttemperatur - Tiefste Lufttemperatur                                                          0.9581775
     ## WITTERUNG - Niederschlag - Niederschlagsmenge insgesamt                                                      0.4822358
     ##                                                                   WITTERUNG - Lufttemperatur - Tiefste Lufttemperatur
     ## WITTERUNG - Luftfeuchtigkeit - Mittlere relative Luftfeuchtigkeit                                          -0.5131329
-    ## WITTERUNG - Lufttemperatur - HÃ¶chste Lufttemperatur                                                         0.9037555
+    ## WITTERUNG - Lufttemperatur - Höchste Lufttemperatur                                                         0.9037555
     ## WITTERUNG - Lufttemperatur - Mittlere Lufttemperatur                                                        0.9581775
     ## WITTERUNG - Lufttemperatur - Tiefste Lufttemperatur                                                         1.0000000
     ## WITTERUNG - Niederschlag - Niederschlagsmenge insgesamt                                                     0.5078810
     ##                                                                   WITTERUNG - Niederschlag - Niederschlagsmenge insgesamt
     ## WITTERUNG - Luftfeuchtigkeit - Mittlere relative Luftfeuchtigkeit                                             -0.08243451
-    ## WITTERUNG - Lufttemperatur - HÃ¶chste Lufttemperatur                                                            0.43530416
+    ## WITTERUNG - Lufttemperatur - Höchste Lufttemperatur                                                            0.43530416
     ## WITTERUNG - Lufttemperatur - Mittlere Lufttemperatur                                                           0.48223577
     ## WITTERUNG - Lufttemperatur - Tiefste Lufttemperatur                                                            0.50788102
     ## WITTERUNG - Niederschlag - Niederschlagsmenge insgesamt                                                        1.00000000
@@ -849,13 +878,13 @@ correlate(dsFinal, use = "pairwise.complete.obs")
     ## # ... with 278 more rows, and 285 more variables: `WITTERUNG -
     ## #   Lufttemperatur - Tiefste Lufttemperatur` <dbl>, `WITTERUNG -
     ## #   Niederschlag - Niederschlagsmenge insgesamt` <dbl>, `WITTERUNG -
-    ## #   Niederschlag - Tage mit NiederschlÃ¤gen` <dbl>, `WITTERUNG -
+    ## #   Niederschlag - Tage mit Niederschlägen` <dbl>, `WITTERUNG -
     ## #   Sonnenschein - Sonnenscheindauer` <dbl>, `WIRTSCHAFT - Bauhauptgewerbe
-    ## #   - AuftragseingÃ¤nge` <dbl>, `WIRTSCHAFT - Bauhauptgewerbe -
+    ## #   - Auftragseingänge` <dbl>, `WIRTSCHAFT - Bauhauptgewerbe -
     ## #   Betriebe` <dbl>, `WIRTSCHAFT - Bauhauptgewerbe - Entgelte` <dbl>,
     ## #   `WIRTSCHAFT - Bauhauptgewerbe - Geleistete Arbeitsstd. -
     ## #   insges.` <dbl>, `WIRTSCHAFT - Bauhauptgewerbe - Geleistete Arbeitsstd.
-    ## #   - Wohnungsbau` <dbl>, `WIRTSCHAFT - Bauhauptgewerbe - TÃ¤tige
+    ## #   - Wohnungsbau` <dbl>, `WIRTSCHAFT - Bauhauptgewerbe - Tätige
     ## #   Personen` <dbl>, `WIRTSCHAFT - Bauhauptgewerbe - Umsatz -
     ## #   insgesamt` <dbl>, `WIRTSCHAFT - Bauhauptgewerbe - Umsatz -
     ## #   Wohnungsbau` <dbl>, `WIRTSCHAFT - Gewerbean- und -abmeldungen -
@@ -873,74 +902,74 @@ correlate(dsFinal, use = "pairwise.complete.obs")
     ## #   `WIRTSCHAFT - Steuern - Grunderwerbsteuer` <dbl>, `WIRTSCHAFT -
     ## #   Steuern - Umsatzsteuer (Gemeindeanteil)` <dbl>, `WIRTSCHAFT -
     ## #   Verarbeitendes Gewerbe - Auslandsumsatz` <dbl>, `WIRTSCHAFT -
-    ## #   Verarbeitendes Gewerbe - BeschÃ¤ftigte` <dbl>, `WIRTSCHAFT -
+    ## #   Verarbeitendes Gewerbe - Beschäftigte` <dbl>, `WIRTSCHAFT -
     ## #   Verarbeitendes Gewerbe - Betriebe` <dbl>, `WIRTSCHAFT - Verarbeitendes
     ## #   Gewerbe - Entgelte` <dbl>, `WIRTSCHAFT - Verarbeitendes Gewerbe -
     ## #   Geleistete Arbeitsstd.` <dbl>, `WIRTSCHAFT - Verarbeitendes Gewerbe -
-    ## #   Gesamtumsatz` <dbl>, `VERKEHRSUNFÃ„LLE - AlkoholunfÃ¤lle -
-    ## #   insgesamt` <dbl>, `VERKEHRSUNFÃ„LLE - AlkoholunfÃ¤lle - Verletzte und
-    ## #   GetÃ¶tete` <dbl>, `VERKEHRSUNFÃ„LLE - FluchtunfÃ¤lle - insgesamt` <dbl>,
-    ## #   `VERKEHRSUNFÃ„LLE - FluchtunfÃ¤lle - Verletzte und GetÃ¶tete` <dbl>,
-    ## #   `VERKEHRSUNFÃ„LLE - VerkehrsunfÃ¤lle - insgesamt` <dbl>,
-    ## #   `VERKEHRSUNFÃ„LLE - VerkehrsunfÃ¤lle - mit PersonenschÃ¤den` <dbl>,
-    ## #   `VERKEHRSUNFÃ„LLE - VerkehrsunfÃ¤lle - Verletzte und GetÃ¶tete` <dbl>,
-    ## #   `TOURISMUS - GÃ¤ste - Ausland` <dbl>, `TOURISMUS - GÃ¤ste -
-    ## #   Inland` <dbl>, `TOURISMUS - GÃ¤ste - insgesamt` <dbl>, `TOURISMUS -
-    ## #   Ãœbernachtungen - Ausland` <dbl>, `TOURISMUS - Ãœbernachtungen -
-    ## #   Inland` <dbl>, `TOURISMUS - Ãœbernachtungen - insgesamt` <dbl>,
-    ## #   `THEATER - AuffÃ¼hrungen - MÃ¼nchner Kammerspiele` <dbl>, `THEATER -
-    ## #   AuffÃ¼hrungen - Nationaltheater` <dbl>, `THEATER - AuffÃ¼hrungen -
-    ## #   Prinzregententheater (GroÃŸes Haus)` <dbl>, `THEATER - AuffÃ¼hrungen -
-    ## #   Residenztheater` <dbl>, `THEATER - AuffÃ¼hrungen - Schauburg - Theater
-    ## #   fÃ¼r junges Publikum` <dbl>, `THEATER - AuffÃ¼hrungen - Theater am
-    ## #   GÃ¤rtnerplatz` <dbl>, `THEATER - Besucher/innen - MÃ¼nchner
+    ## #   Gesamtumsatz` <dbl>, `VERKEHRSUNFÄLLE - Alkoholunfälle -
+    ## #   insgesamt` <dbl>, `VERKEHRSUNFÄLLE - Alkoholunfälle - Verletzte und
+    ## #   Getötete` <dbl>, `VERKEHRSUNFÄLLE - Fluchtunfälle - insgesamt` <dbl>,
+    ## #   `VERKEHRSUNFÄLLE - Fluchtunfälle - Verletzte und Getötete` <dbl>,
+    ## #   `VERKEHRSUNFÄLLE - Verkehrsunfälle - insgesamt` <dbl>,
+    ## #   `VERKEHRSUNFÄLLE - Verkehrsunfälle - mit Personenschäden` <dbl>,
+    ## #   `VERKEHRSUNFÄLLE - Verkehrsunfälle - Verletzte und Getötete` <dbl>,
+    ## #   `TOURISMUS - Gäste - Ausland` <dbl>, `TOURISMUS - Gäste -
+    ## #   Inland` <dbl>, `TOURISMUS - Gäste - insgesamt` <dbl>, `TOURISMUS -
+    ## #   Übernachtungen - Ausland` <dbl>, `TOURISMUS - Übernachtungen -
+    ## #   Inland` <dbl>, `TOURISMUS - Übernachtungen - insgesamt` <dbl>,
+    ## #   `THEATER - Aufführungen - Münchner Kammerspiele` <dbl>, `THEATER -
+    ## #   Aufführungen - Nationaltheater` <dbl>, `THEATER - Aufführungen -
+    ## #   Prinzregententheater (Großes Haus)` <dbl>, `THEATER - Aufführungen -
+    ## #   Residenztheater` <dbl>, `THEATER - Aufführungen - Schauburg - Theater
+    ## #   für junges Publikum` <dbl>, `THEATER - Aufführungen - Theater am
+    ## #   Gärtnerplatz` <dbl>, `THEATER - Besucher/innen - Münchner
     ## #   Kammerspiele` <dbl>, `THEATER - Besucher/innen -
     ## #   Nationaltheater` <dbl>, `THEATER - Besucher/innen -
-    ## #   Prinzregententheater (GroÃŸes Haus)` <dbl>, `THEATER - Besucher/innen -
+    ## #   Prinzregententheater (Großes Haus)` <dbl>, `THEATER - Besucher/innen -
     ## #   Residenztheater` <dbl>, `THEATER - Besucher/innen - Schauburg -
-    ## #   Theater fÃ¼r junges Publikum` <dbl>, `THEATER - Besucher/innen -
-    ## #   Theater am GÃ¤rtnerplatz` <dbl>, `THEATER - Durchschnittl.
-    ## #   Platzausnutzung - MÃ¼nchner Kammerspiele` <dbl>, `THEATER -
+    ## #   Theater für junges Publikum` <dbl>, `THEATER - Besucher/innen -
+    ## #   Theater am Gärtnerplatz` <dbl>, `THEATER - Durchschnittl.
+    ## #   Platzausnutzung - Münchner Kammerspiele` <dbl>, `THEATER -
     ## #   Durchschnittl. Platzausnutzung - Nationaltheater` <dbl>, `THEATER -
-    ## #   Durchschnittl. Platzausnutzung - Prinzregententheater (GroÃŸes
+    ## #   Durchschnittl. Platzausnutzung - Prinzregententheater (Großes
     ## #   Haus)` <dbl>, `THEATER - Durchschnittl. Platzausnutzung -
     ## #   Residenztheater` <dbl>, `THEATER - Durchschnittl. Platzausnutzung -
-    ## #   Schauburg - Theater fÃ¼r junges Publikum` <dbl>, `THEATER -
-    ## #   Durchschnittl. Platzausnutzung - Theater am GÃ¤rtnerplatz` <dbl>,
-    ## #   `SOZIALE LEISTUNGEN - EmpfÃ¤nger nach SGB XII - AuslÃ¤nder/innen` <dbl>,
-    ## #   `SOZIALE LEISTUNGEN - EmpfÃ¤nger nach SGB XII - Deutsche` <dbl>,
-    ## #   `SOZIALE LEISTUNGEN - EmpfÃ¤nger nach SGB XII - EmpfÃ¤nger/innen
-    ## #   insges.` <dbl>, `SOZIALE LEISTUNGEN - EmpfÃ¤nger nach SGB XII -
-    ## #   Frauen` <dbl>, `SOZIALE LEISTUNGEN - EmpfÃ¤nger nach SGB XII -
-    ## #   MÃ¤nner` <dbl>, `SOZIALE LEISTUNGEN - Grundsicherung im Alter und bei
-    ## #   Erwerbsminderung - AuslÃ¤nder/innen` <dbl>, `SOZIALE LEISTUNGEN -
+    ## #   Schauburg - Theater für junges Publikum` <dbl>, `THEATER -
+    ## #   Durchschnittl. Platzausnutzung - Theater am Gärtnerplatz` <dbl>,
+    ## #   `SOZIALE LEISTUNGEN - Empfänger nach SGB XII - Ausländer/innen` <dbl>,
+    ## #   `SOZIALE LEISTUNGEN - Empfänger nach SGB XII - Deutsche` <dbl>,
+    ## #   `SOZIALE LEISTUNGEN - Empfänger nach SGB XII - Empfänger/innen
+    ## #   insges.` <dbl>, `SOZIALE LEISTUNGEN - Empfänger nach SGB XII -
+    ## #   Frauen` <dbl>, `SOZIALE LEISTUNGEN - Empfänger nach SGB XII -
+    ## #   Männer` <dbl>, `SOZIALE LEISTUNGEN - Grundsicherung im Alter und bei
+    ## #   Erwerbsminderung - Ausländer/innen` <dbl>, `SOZIALE LEISTUNGEN -
     ## #   Grundsicherung im Alter und bei Erwerbsminderung - Deutsche` <dbl>,
     ## #   `SOZIALE LEISTUNGEN - Grundsicherung im Alter und bei Erwerbsminderung
-    ## #   - EmpfÃ¤nger/innen insges.` <dbl>, `SOZIALE LEISTUNGEN - Grundsicherung
+    ## #   - Empfänger/innen insges.` <dbl>, `SOZIALE LEISTUNGEN - Grundsicherung
     ## #   im Alter und bei Erwerbsminderung - Frauen` <dbl>, `SOZIALE LEISTUNGEN
-    ## #   - Grundsicherung im Alter und bei Erwerbsminderung - MÃ¤nner` <dbl>,
+    ## #   - Grundsicherung im Alter und bei Erwerbsminderung - Männer` <dbl>,
     ## #   `SOZIALE LEISTUNGEN - Hilfe zum Lebensunterhalt -
-    ## #   AuslÃ¤nder/innen` <dbl>, `SOZIALE LEISTUNGEN - Hilfe zum
+    ## #   Ausländer/innen` <dbl>, `SOZIALE LEISTUNGEN - Hilfe zum
     ## #   Lebensunterhalt - Deutsche` <dbl>, `SOZIALE LEISTUNGEN - Hilfe zum
-    ## #   Lebensunterhalt - EmpfÃ¤nger/innen insges.` <dbl>, `SOZIALE LEISTUNGEN
+    ## #   Lebensunterhalt - Empfänger/innen insges.` <dbl>, `SOZIALE LEISTUNGEN
     ## #   - Hilfe zum Lebensunterhalt - Frauen` <dbl>, `SOZIALE LEISTUNGEN -
-    ## #   Hilfe zum Lebensunterhalt - MÃ¤nner` <dbl>, `ORCHESTER - Besucher/innen
+    ## #   Hilfe zum Lebensunterhalt - Männer` <dbl>, `ORCHESTER - Besucher/innen
     ## #   - Bayerisches Staatsorchester` <dbl>, `ORCHESTER - Besucher/innen -
-    ## #   MÃ¼nchner Philharmoniker` <dbl>, `ORCHESTER - Durchschnittl.
+    ## #   Münchner Philharmoniker` <dbl>, `ORCHESTER - Durchschnittl.
     ## #   Platzausnutzung - Bayerisches Staatsorchester` <dbl>, `ORCHESTER -
-    ## #   Durchschnittl. Platzausnutzung - MÃ¼nchner Philharmoniker` <dbl>,
+    ## #   Durchschnittl. Platzausnutzung - Münchner Philharmoniker` <dbl>,
     ## #   `ORCHESTER - Konzerte - Bayerisches Staatsorchester` <dbl>, `ORCHESTER
-    ## #   - Konzerte - MÃ¼nchner Philharmoniker` <dbl>, `MUSEEN - Besucher/innen
+    ## #   - Konzerte - Münchner Philharmoniker` <dbl>, `MUSEEN - Besucher/innen
     ## #   - Alte Pinakothek` <dbl>, `MUSEEN - Besucher/innen - Bayerisches
     ## #   Nationalmuseum` <dbl>, `MUSEEN - Besucher/innen - Deutsches Museum -
     ## #   Museumsinsel` <dbl>, `MUSEEN - Besucher/innen - Deutsches Museum -
-    ## #   Verkehrszentrum` <dbl>, `MUSEEN - Besucher/innen - MÃ¼nchner
+    ## #   Verkehrszentrum` <dbl>, `MUSEEN - Besucher/innen - Münchner
     ## #   Stadtmuseum` <dbl>, `MUSEEN - Besucher/innen - Museum
     ## #   Brandhorst` <dbl>, `MUSEEN - Besucher/innen - Museum Mensch und
     ## #   Natur` <dbl>, `MUSEEN - Besucher/innen - Neue Pinakothek` <dbl>,
     ## #   `MUSEEN - Besucher/innen - Pinakothek der Moderne` <dbl>, `MUSEEN -
     ## #   Besucher/innen - Schackgalerie` <dbl>, `MUSEEN - Besucher/innen -
-    ## #   StÃ¤dtische Galerie im Lenbachhaus` <dbl>, `KINOS - Besucher/innen -
+    ## #   Städtische Galerie im Lenbachhaus` <dbl>, `KINOS - Besucher/innen -
     ## #   insgesamt` <dbl>, `KFZ-Neuzulassungen - Fahrzeugtypen - Kraftfahrzeuge
     ## #   insgesamt` <dbl>, `KFZ-Neuzulassungen - Fahrzeugtypen -
     ## #   Personenkraftwagen Firmen` <dbl>, `KFZ-Neuzulassungen - Fahrzeugtypen
@@ -969,25 +998,25 @@ dsFinal %>%
     ##    x                              y                                       r
     ##    <chr>                          <chr>                               <dbl>
     ##  1 WIRTSCHAFT - Handwerksbetrieb~ WIRTSCHAFT - Handwerksbetriebe - ~  0.991
-    ##  2 WIRTSCHAFT - Handwerksbetrieb~ BEVÃ–LKERUNG - Haushalte nach Kind~ -0.982
+    ##  2 WIRTSCHAFT - Handwerksbetrieb~ BEVÖLKERUNG - Haushalte nach Kind~ -0.982
     ##  3 WIRTSCHAFT - Handwerksbetrieb~ WIRTSCHAFT - Handwerksbetriebe - ~  0.991
     ##  4 WIRTSCHAFT - Handwerksbetrieb~ WIRTSCHAFT - Handwerksbetriebe - ~  0.990
-    ##  5 WIRTSCHAFT - Handwerksbetrieb~ SOZIALE LEISTUNGEN - EmpfÃ¤nger na~  0.981
-    ##  6 WIRTSCHAFT - Handwerksbetrieb~ SOZIALE LEISTUNGEN - EmpfÃ¤nger na~  0.982
+    ##  5 WIRTSCHAFT - Handwerksbetrieb~ SOZIALE LEISTUNGEN - Empfänger na~  0.981
+    ##  6 WIRTSCHAFT - Handwerksbetrieb~ SOZIALE LEISTUNGEN - Empfänger na~  0.982
     ##  7 WIRTSCHAFT - Handwerksbetrieb~ SOZIALE LEISTUNGEN - Grundsicheru~  0.984
     ##  8 WIRTSCHAFT - Handwerksbetrieb~ SOZIALE LEISTUNGEN - Grundsicheru~  0.982
     ##  9 WIRTSCHAFT - Handwerksbetrieb~ SOZIALE LEISTUNGEN - Grundsicheru~  0.984
     ## 10 WIRTSCHAFT - Handwerksbetrieb~ KFZ-Bestand - Pkw-Kraftstoffarten~  0.981
-    ## 11 WIRTSCHAFT - Handwerksbetrieb~ BEVÃ–LKERUNG - EU-NationalitÃ¤ten -~  0.985
-    ## 12 WIRTSCHAFT - Handwerksbetrieb~ BEVÃ–LKERUNG - Familienstand - led~  0.980
-    ## 13 WIRTSCHAFT - Handwerksbetrieb~ BEVÃ–LKERUNG - Geschlecht und Staa~  0.981
-    ## 14 WIRTSCHAFT - Handwerksbetrieb~ BEVÃ–LKERUNG - Geschlecht und Staa~  0.981
-    ## 15 WIRTSCHAFT - Handwerksbetrieb~ BEVÃ–LKERUNG - Nicht-EU-Nationalit~ -0.982
-    ## 16 WIRTSCHAFT - Handwerksbetrieb~ BEVÃ–LKERUNG - ReligionszugehÃ¶rigk~  0.981
+    ## 11 WIRTSCHAFT - Handwerksbetrieb~ BEVÖLKERUNG - EU-Nationalitäten -~  0.985
+    ## 12 WIRTSCHAFT - Handwerksbetrieb~ BEVÖLKERUNG - Familienstand - led~  0.980
+    ## 13 WIRTSCHAFT - Handwerksbetrieb~ BEVÖLKERUNG - Geschlecht und Staa~  0.981
+    ## 14 WIRTSCHAFT - Handwerksbetrieb~ BEVÖLKERUNG - Geschlecht und Staa~  0.981
+    ## 15 WIRTSCHAFT - Handwerksbetrieb~ BEVÖLKERUNG - Nicht-EU-Nationalit~ -0.982
+    ## 16 WIRTSCHAFT - Handwerksbetrieb~ BEVÖLKERUNG - Religionszugehörigk~  0.981
     ## 17 WIRTSCHAFT - Handwerksbetrieb~ WIRTSCHAFT - Handwerksbetriebe - ~  0.990
     ## 18 WIRTSCHAFT - Verarbeitendes G~ WIRTSCHAFT - Verarbeitendes Gewer~  0.986
     ## 19 WIRTSCHAFT - Verarbeitendes G~ WIRTSCHAFT - Verarbeitendes Gewer~  0.986
-    ## 20 VERKEHRSUNFÃ„LLE - Verkehrsunf~ VERKEHRSUNFÃ„LLE - VerkehrsunfÃ¤lle~  0.981
+    ## 20 VERKEHRSUNFÄLLE - Verkehrsunf~ VERKEHRSUNFÄLLE - Verkehrsunfälle~  0.981
 
 ``` r
 # how many does each correlate with
@@ -1009,26 +1038,26 @@ dsFinal %>%
     ## # Groups:   x [20]
     ##    x                                                                      n
     ##    <chr>                                                              <int>
-    ##  1 BEVÃ–LKERUNG - Familienstand - ledig                                   29
-    ##  2 BEVÃ–LKERUNG - ReligionszugehÃ¶rigkeit - sonstige/ ohne/ ohne Angabe    29
-    ##  3 BEVÃ–LKERUNG - Geschlecht und StaatsangehÃ¶rigkeit - AuslÃ¤nder weib~    28
-    ##  4 BEVÃ–LKERUNG - Altersgruppen - MinderjÃ¤hrige (unter 18 J.)             27
-    ##  5 BEVÃ–LKERUNG - EU-NationalitÃ¤ten - Bulgarien                           27
-    ##  6 BEVÃ–LKERUNG - Geschlecht und StaatsangehÃ¶rigkeit - Einwohner/inne~    27
-    ##  7 BEVÃ–LKERUNG - Geschlecht und StaatsangehÃ¶rigkeit - Einwohner weib~    26
-    ##  8 BEVÃ–LKERUNG - Altersgruppen - Noch nicht Schulpflichtige (unter 6~    25
+    ##  1 BEVÖLKERUNG - Familienstand - ledig                                   29
+    ##  2 BEVÖLKERUNG - Religionszugehörigkeit - sonstige/ ohne/ ohne Angabe    29
+    ##  3 BEVÖLKERUNG - Geschlecht und Staatsangehörigkeit - Ausländer weib~    28
+    ##  4 BEVÖLKERUNG - Altersgruppen - Minderjährige (unter 18 J.)             27
+    ##  5 BEVÖLKERUNG - EU-Nationalitäten - Bulgarien                           27
+    ##  6 BEVÖLKERUNG - Geschlecht und Staatsangehörigkeit - Einwohner/inne~    27
+    ##  7 BEVÖLKERUNG - Geschlecht und Staatsangehörigkeit - Einwohner weib~    26
+    ##  8 BEVÖLKERUNG - Altersgruppen - Noch nicht Schulpflichtige (unter 6~    25
     ##  9 SOZIALE LEISTUNGEN - Grundsicherung im Alter und bei Erwerbsminde~    25
     ## 10 SOZIALE LEISTUNGEN - Grundsicherung im Alter und bei Erwerbsminde~    24
-    ## 11 BEVÃ–LKERUNG - Altersgruppen - StrafmÃ¼ndige (14 J. und Ã¤lter)          23
-    ## 12 BEVÃ–LKERUNG - Geschlecht und StaatsangehÃ¶rigkeit - Einwohner mÃ¤nn~    23
+    ## 11 BEVÖLKERUNG - Altersgruppen - Strafmündige (14 J. und älter)          23
+    ## 12 BEVÖLKERUNG - Geschlecht und Staatsangehörigkeit - Einwohner männ~    23
     ## 13 SOZIALE LEISTUNGEN - Grundsicherung im Alter und bei Erwerbsminde~    23
-    ## 14 BEVÃ–LKERUNG - Altersgruppen - ErwerbsfÃ¤hige (15- 64 J.)               22
-    ## 15 BEVÃ–LKERUNG - Altersgruppen - VolljÃ¤hrige (18 J. und Ã¤lter)           22
-    ## 16 BEVÃ–LKERUNG - Haushalte nach Nationengruppe - deutsch - auslÃ¤ndis~    22
-    ## 17 BEVÃ–LKERUNG - Altersgruppen - Schulpflichtige (6- 14 J.)              21
-    ## 18 BEVÃ–LKERUNG - Haushalte nach Kinderzahl - mit 1 Kind                  21
-    ## 19 BEVÃ–LKERUNG - Kontinente - Amerika                                    21
-    ## 20 SOZIALE LEISTUNGEN - EmpfÃ¤nger nach SGB XII - MÃ¤nner                  21
+    ## 14 BEVÖLKERUNG - Altersgruppen - Erwerbsfähige (15- 64 J.)               22
+    ## 15 BEVÖLKERUNG - Altersgruppen - Volljährige (18 J. und älter)           22
+    ## 16 BEVÖLKERUNG - Haushalte nach Nationengruppe - deutsch - ausländis~    22
+    ## 17 BEVÖLKERUNG - Altersgruppen - Schulpflichtige (6- 14 J.)              21
+    ## 18 BEVÖLKERUNG - Haushalte nach Kinderzahl - mit 1 Kind                  21
+    ## 19 BEVÖLKERUNG - Kontinente - Amerika                                    21
+    ## 20 SOZIALE LEISTUNGEN - Empfänger nach SGB XII - Männer                  21
 
 ``` r
 # split the correlated variables by section/subsections
@@ -1052,8 +1081,8 @@ dsFinal %>%
 ```
 
     ##                     
-    ##                      BEVÃ–LKERUNG KFZ-Bestand SOZIALE LEISTUNGEN WIRTSCHAFT
-    ##   BEVÃ–LKERUNG                  0          33                 78          7
+    ##                      BEVÖLKERUNG KFZ-Bestand SOZIALE LEISTUNGEN WIRTSCHAFT
+    ##   BEVÖLKERUNG                  0          33                 78          7
     ##   KFZ-Bestand                 33           0                  8          1
     ##   SOZIALE LEISTUNGEN          78           8                  0          5
     ##   WIRTSCHAFT                   7           1                  5          0
@@ -1075,16 +1104,16 @@ dsAgg %>%
     ## # A tibble: 108 x 4
     ##    x_field                      y_field                          r NAs_proc
     ##    <chr>                        <chr>                        <dbl>    <dbl>
-    ##  1 BEVÃ–LKERUNG - Altersgruppen~ SOZIALE LEISTUNGEN - Grunds~ 0.982  0.00847
-    ##  2 BEVÃ–LKERUNG - Altersgruppen~ SOZIALE LEISTUNGEN - Grunds~ 0.981  0.00847
-    ##  3 BEVÃ–LKERUNG - Altersgruppen~ SOZIALE LEISTUNGEN - EmpfÃ¤n~ 0.991  0.00847
-    ##  4 BEVÃ–LKERUNG - Altersgruppen~ SOZIALE LEISTUNGEN - EmpfÃ¤n~ 0.981  0.00847
-    ##  5 BEVÃ–LKERUNG - Altersgruppen~ SOZIALE LEISTUNGEN - Grunds~ 0.990  0.00847
-    ##  6 BEVÃ–LKERUNG - Altersgruppen~ KFZ-Bestand - Fahrzeugtypen~ 0.985  0.00847
-    ##  7 BEVÃ–LKERUNG - Altersgruppen~ SOZIALE LEISTUNGEN - EmpfÃ¤n~ 0.992  0.00847
-    ##  8 BEVÃ–LKERUNG - Altersgruppen~ SOZIALE LEISTUNGEN - EmpfÃ¤n~ 0.981  0.00847
-    ##  9 BEVÃ–LKERUNG - Altersgruppen~ SOZIALE LEISTUNGEN - Grunds~ 0.989  0.00847
-    ## 10 BEVÃ–LKERUNG - Altersgruppen~ SOZIALE LEISTUNGEN - EmpfÃ¤n~ 0.981  0.00847
+    ##  1 BEVÖLKERUNG - Altersgruppen~ SOZIALE LEISTUNGEN - Grunds~ 0.982  0.00847
+    ##  2 BEVÖLKERUNG - Altersgruppen~ SOZIALE LEISTUNGEN - Grunds~ 0.981  0.00847
+    ##  3 BEVÖLKERUNG - Altersgruppen~ SOZIALE LEISTUNGEN - Empfän~ 0.991  0.00847
+    ##  4 BEVÖLKERUNG - Altersgruppen~ SOZIALE LEISTUNGEN - Empfän~ 0.981  0.00847
+    ##  5 BEVÖLKERUNG - Altersgruppen~ SOZIALE LEISTUNGEN - Grunds~ 0.990  0.00847
+    ##  6 BEVÖLKERUNG - Altersgruppen~ KFZ-Bestand - Fahrzeugtypen~ 0.985  0.00847
+    ##  7 BEVÖLKERUNG - Altersgruppen~ SOZIALE LEISTUNGEN - Empfän~ 0.992  0.00847
+    ##  8 BEVÖLKERUNG - Altersgruppen~ SOZIALE LEISTUNGEN - Empfän~ 0.981  0.00847
+    ##  9 BEVÖLKERUNG - Altersgruppen~ SOZIALE LEISTUNGEN - Grunds~ 0.989  0.00847
+    ## 10 BEVÖLKERUNG - Altersgruppen~ SOZIALE LEISTUNGEN - Empfän~ 0.981  0.00847
     ## # ... with 98 more rows
 
 ``` r
@@ -1104,14 +1133,14 @@ These are pure sample examples out of
 \~100
 
 ``` r
-plot(dsFinal$`BEVÃ–LKERUNG - Altersgruppen - Rentner/innen (65 J. und Ã¤lter)`, dsFinal$`SOZIALE LEISTUNGEN - EmpfÃ¤nger nach SGB XII - EmpfÃ¤nger/innen insges.`,
+plot(dsFinal$`BEVÖLKERUNG - Altersgruppen - Rentner/innen (65 J. und älter)`, dsFinal$`SOZIALE LEISTUNGEN - Empfänger nach SGB XII - Empfänger/innen insges.`,
      main="Old-age pensioner and social welfare recipients")
 ```
 
 ![](Munich_numbers_files/figure-gfm/prepare_correlation_charts-1.png)<!-- -->
 
 ``` r
-plot(dsFinal$`BEVÃ–LKERUNG - Familienstand - geschieden`, dsFinal$`KFZ-Bestand - Pkw-Kraftstoffarten - Diesel gesamt`,
+plot(dsFinal$`BEVÖLKERUNG - Familienstand - geschieden`, dsFinal$`KFZ-Bestand - Pkw-Kraftstoffarten - Diesel gesamt`,
      main="Divorces and Diesel cars")
 ```
 
@@ -1123,14 +1152,14 @@ Handworkers by number of diesel cars and total
 population
 
 ``` r
-model.lm <- lm(`WIRTSCHAFT - Handwerksbetriebe - Handwerk f. den priv. Bedarf` ~ `KFZ-Bestand - Pkw-Kraftstoffarten - Diesel gesamt` + `BEVÃ–LKERUNG - Geschlecht und StaatsangehÃ¶rigkeit - Einwohner/innen insgesamt`, data = dsFinal)
+model.lm <- lm(`WIRTSCHAFT - Handwerksbetriebe - Handwerk f. den priv. Bedarf` ~ `KFZ-Bestand - Pkw-Kraftstoffarten - Diesel gesamt` + `BEVÖLKERUNG - Geschlecht und Staatsangehörigkeit - Einwohner/innen insgesamt`, data = dsFinal)
 summary(model.lm)
 ```
 
     ## 
     ## Call:
     ## lm(formula = `WIRTSCHAFT - Handwerksbetriebe - Handwerk f. den priv. Bedarf` ~ 
-    ##     `KFZ-Bestand - Pkw-Kraftstoffarten - Diesel gesamt` + `BEVÃ–LKERUNG - Geschlecht und StaatsangehÃ¶rigkeit - Einwohner/innen insgesamt`, 
+    ##     `KFZ-Bestand - Pkw-Kraftstoffarten - Diesel gesamt` + `BEVÖLKERUNG - Geschlecht und Staatsangehörigkeit - Einwohner/innen insgesamt`, 
     ##     data = dsFinal)
     ## 
     ## Residuals:
@@ -1141,23 +1170,23 @@ summary(model.lm)
     ##                                                                                  Estimate
     ## (Intercept)                                                                    -7.815e+02
     ## `KFZ-Bestand - Pkw-Kraftstoffarten - Diesel gesamt`                             1.416e-03
-    ## `BEVÃ–LKERUNG - Geschlecht und StaatsangehÃ¶rigkeit - Einwohner/innen insgesamt`  3.978e-03
+    ## `BEVÖLKERUNG - Geschlecht und Staatsangehörigkeit - Einwohner/innen insgesamt`  3.978e-03
     ##                                                                                Std. Error
     ## (Intercept)                                                                     3.665e+02
     ## `KFZ-Bestand - Pkw-Kraftstoffarten - Diesel gesamt`                             6.676e-04
-    ## `BEVÃ–LKERUNG - Geschlecht und StaatsangehÃ¶rigkeit - Einwohner/innen insgesamt`  3.615e-04
+    ## `BEVÖLKERUNG - Geschlecht und Staatsangehörigkeit - Einwohner/innen insgesamt`  3.615e-04
     ##                                                                                t value
     ## (Intercept)                                                                     -2.132
     ## `KFZ-Bestand - Pkw-Kraftstoffarten - Diesel gesamt`                              2.121
-    ## `BEVÃ–LKERUNG - Geschlecht und StaatsangehÃ¶rigkeit - Einwohner/innen insgesamt`  11.006
+    ## `BEVÖLKERUNG - Geschlecht und Staatsangehörigkeit - Einwohner/innen insgesamt`  11.006
     ##                                                                                Pr(>|t|)
     ## (Intercept)                                                                      0.0344
     ## `KFZ-Bestand - Pkw-Kraftstoffarten - Diesel gesamt`                              0.0354
-    ## `BEVÃ–LKERUNG - Geschlecht und StaatsangehÃ¶rigkeit - Einwohner/innen insgesamt`   <2e-16
+    ## `BEVÖLKERUNG - Geschlecht und Staatsangehörigkeit - Einwohner/innen insgesamt`   <2e-16
     ##                                                                                   
     ## (Intercept)                                                                    *  
     ## `KFZ-Bestand - Pkw-Kraftstoffarten - Diesel gesamt`                            *  
-    ## `BEVÃ–LKERUNG - Geschlecht und StaatsangehÃ¶rigkeit - Einwohner/innen insgesamt` ***
+    ## `BEVÖLKERUNG - Geschlecht und Staatsangehörigkeit - Einwohner/innen insgesamt` ***
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
     ## 
