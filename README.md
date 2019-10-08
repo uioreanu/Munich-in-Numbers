@@ -102,12 +102,24 @@ dat$BEVÃ–LKERUNG %>%
   filter(MONATSZAHL %in% c("Geschlecht und StaatsangehÃ¶rigkeit")) %>%
   filter(str_detect(AUSPRAEGUNG, 'Einwohner')) %>%
   mutate(Month = as.Date(paste0(MONAT,'01'), format = '%Y%m%d')) %>%
+  arrange(-WERT) %>% # sort
+  mutate_at(vars(AUSPRAEGUNG), funs(factor(., levels=unique(.)))) %>% # convert to factor
   ggplot(., aes(x=Month, y = WERT, group=AUSPRAEGUNG)) + 
   geom_line() + 
   facet_wrap(~AUSPRAEGUNG) +
   theme_classic()+ 
   scale_y_continuous(labels = scales::comma) + ggtitle("Munich Inhabitants (male, female, all)")
 ```
+
+    ## Warning: funs() is soft deprecated as of dplyr 0.8.0
+    ## please use list() instead
+    ## 
+    ##   # Before:
+    ##   funs(name = f(.))
+    ## 
+    ##   # After: 
+    ##   list(name = ~ f(.))
+    ## This warning is displayed once per session.
 
 ![](Munich_numbers_files/figure-gfm/charts_population_all-1.png)<!-- -->
 
@@ -126,16 +138,6 @@ dat$BEVÃ–LKERUNG %>%
   theme_classic()+ 
   scale_y_continuous(labels = scales::comma) + ggtitle("Germans in Munich (male, female, all)")
 ```
-
-    ## Warning: funs() is soft deprecated as of dplyr 0.8.0
-    ## please use list() instead
-    ## 
-    ##   # Before:
-    ##   funs(name = f(.))
-    ## 
-    ##   # After: 
-    ##   list(name = ~ f(.))
-    ## This warning is displayed once per session.
 
 ![](Munich_numbers_files/figure-gfm/charts_population_german-1.png)<!-- -->
 
