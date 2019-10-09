@@ -595,6 +595,44 @@ plot(
 
 ![](Munich_numbers_files/figure-gfm/female_share_foreigners-1.png)<!-- -->
 
+# German population
+
+``` r
+dsFinal %>%
+  rownames_to_column() %>%
+  select(rowname, `foreigners` = `BEVÖLKERUNG - Geschlecht und Staatsangehörigkeit - Ausländer/innen insgesamt`, `germans` =  `BEVÖLKERUNG - Geschlecht und Staatsangehörigkeit - Deutsche insgesamt`) %>%
+  mutate(Month = as.Date(paste0(rowname,'01'), format = '%Y%m%d')) %>%
+  filter(Month>='2010-01-01') %>%
+  ggplot(aes(x = Month))  + 
+    geom_line(aes(y = germans)) + 
+    theme_minimal() + 
+    scale_x_date(date_breaks = "1 year", date_labels = "%Y") + 
+    scale_y_continuous(labels = scales::comma) 
+```
+
+    ## Warning: Removed 1 rows containing missing values (geom_path).
+
+![](Munich_numbers_files/figure-gfm/charts_population_germans_only-1.png)<!-- -->
+
+# Foreigners
+
+``` r
+dsFinal %>%
+  rownames_to_column() %>%
+  select(rowname, `foreigners` = `BEVÖLKERUNG - Geschlecht und Staatsangehörigkeit - Ausländer/innen insgesamt`, `germans` =  `BEVÖLKERUNG - Geschlecht und Staatsangehörigkeit - Deutsche insgesamt`) %>%
+  mutate(Month = as.Date(paste0(rowname,'01'), format = '%Y%m%d')) %>%
+  filter(Month>='2010-01-01') %>%
+  ggplot(aes(x = Month))  + 
+    geom_line(aes(y = foreigners, linetype="twodash")) + 
+    theme_minimal() + 
+    scale_x_date(date_breaks = "1 year", date_labels = "%Y") + 
+    scale_y_continuous(labels = scales::comma) 
+```
+
+    ## Warning: Removed 1 rows containing missing values (geom_path).
+
+![](Munich_numbers_files/figure-gfm/charts_population_foreigners_only-1.png)<!-- -->
+
 # Counting NAs
 
 ``` r
