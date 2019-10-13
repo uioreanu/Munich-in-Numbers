@@ -3,7 +3,37 @@ Munich\_numbers
 CU
 10/6/2019
 
-## Munich Numbers - exploratory analysis
+  - [Brief exploratory analysis](#brief-exploratory-analysis)
+  - [Data Source](#data-source)
+  - [Cinema visitors (monthly trends)](#cinema-visitors-monthly-trends)
+  - [weather trends](#weather-trends)
+  - [Tourist trends](#tourist-trends)
+  - [Population trends (by gender)](#population-trends-by-gender)
+      - [Inhabitants (all & gender)](#inhabitants-all-gender)
+      - [German inhabitants (all &
+        gender)](#german-inhabitants-all-gender)
+      - [Foreign inhabitants (all &
+        gender)](#foreign-inhabitants-all-gender)
+      - [Family status](#family-status)
+      - [Age groups](#age-groups)
+      - [Religion](#religion)
+  - [Unemployed (gender & nationality)](#unemployed-gender-nationality)
+      - [absolute numbers](#absolute-numbers)
+      - [as percentages](#as-percentages)
+  - [Compressing data](#compressing-data)
+  - [Female share](#female-share)
+      - [among german nationals](#among-german-nationals)
+  - [German population](#german-population)
+  - [Foreigners](#foreigners)
+  - [Counting NAs](#counting-nas)
+  - [Explore correlations](#explore-correlations)
+      - [simple use of cor()](#simple-use-of-cor)
+      - [the correlate package](#the-correlate-package)
+  - [Next steps](#next-steps)
+  - [Highly Correlated variables](#highly-correlated-variables)
+  - [linear models](#linear-models)
+
+## Brief exploratory analysis
 
 This is a brief EDA of Munich stats.
 
@@ -14,26 +44,15 @@ a monthly basis. They make way more data available, these are solely
 main KPIs. Source of data:
 <http://www.mstatistik-muenchen.de/monatszahlenmonitoring/export/export.php>.
 Official Data exploration portal:
-<http://www.mstatistik-muenchen.de/monatszahlenmonitoring/atlas.html?indicator=i158&date=Jan&select=20,19&select2=JAHR&indicator2=i0>
-
-Data source in Excel, processed here into data.frames and correlation
-charts
+<http://www.mstatistik-muenchen.de/monatszahlenmonitoring/atlas.html?indicator=i158&date=Jan&select=20,19&select2=JAHR&indicator2=i0>.
+Data here is extracted from Excel, processed into data.frames and
+correlation charts
 
 # Cinema visitors (monthly trends)
 
 ``` r
 ##########################
 # exploratory charts
-dat$KINOS %>%
-  select(MONATSZAHL) %>%
-  table()
-```
-
-    ## .
-    ## Besucher/innen 
-    ##            228
-
-``` r
 dat$KINOS %>%
   mutate(Month = as.Date(paste0(MONAT,'01'), format = '%Y%m%d')) %>%
   ggplot(., aes(x=Month, y = WERT, group=AUSPRAEGUNG)) + 
@@ -47,10 +66,6 @@ dat$KINOS %>%
 
 ![](Munich_numbers_files/figure-gfm/charts_kinos-1.png)<!-- -->
 
-``` r
-#ggsave("monthly trend - Cinema Visitors.png", dpi=400, dev='png', height=4, width=5, units="in", scale = 2)
-```
-
 # weather trends
 
 ``` r
@@ -58,7 +73,7 @@ dat$WITTERUNG %>%
   filter(MONATSZAHL %in% c("Sonnenschein", "Lufttemperatur")) %>%
   mutate(Month = as.Date(paste0(MONAT,'01'), format = '%Y%m%d')) %>%
   ggplot(., aes(x=Month, y = WERT, group=AUSPRAEGUNG)) + 
-  geom_line() + 
+  geom_point() + 
   facet_wrap(~AUSPRAEGUNG, scales = "free") +
   theme_classic()+ 
   geom_smooth() + scale_y_continuous(labels = scales::comma) + ggtitle("monthly weather trends")
@@ -88,10 +103,6 @@ dat$TOURISMUS %>%
     ## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
 
 ![](Munich_numbers_files/figure-gfm/charts_tourism-1.png)<!-- -->
-
-``` r
-#ggsave("monthly trend - Turist guests.png", dpi=400, dev='png', height=4, width=5, units="in", scale = 2)
-```
 
 # Population trends (by gender)
 
