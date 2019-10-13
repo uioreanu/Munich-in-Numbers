@@ -2,16 +2,15 @@
 title: "Munich in numbers"
 author: "CU"
 date: "10/6/2019"
+always_allow_html: yes
 output: 
+  github_document:
   html_document:
     code_folding: hide
     toc: true
     toc_depth: 2
 ---
 ```{r setup, include=FALSE}
-#   github_document
-   # toc: true
-    # toc_depth: 2
 
 library(knitr)         # markdown enhancements
 library(kableExtra)    # nice rmarkdown tables
