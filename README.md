@@ -1,43 +1,15 @@
-Munich\_numbers
+Munich in numbers
 ================
 CU
 10/6/2019
 
-  - [Brief exploratory analysis](#brief-exploratory-analysis)
-  - [Data Source](#data-source)
-  - [Cinema visitors (monthly trends)](#cinema-visitors-monthly-trends)
-  - [weather trends](#weather-trends)
-  - [Tourist trends](#tourist-trends)
-  - [Population trends (by gender)](#population-trends-by-gender)
-      - [Inhabitants (all & gender)](#inhabitants-all-gender)
-      - [German inhabitants (all &
-        gender)](#german-inhabitants-all-gender)
-      - [Foreign inhabitants (all &
-        gender)](#foreign-inhabitants-all-gender)
-      - [Family status](#family-status)
-      - [Age groups](#age-groups)
-      - [Religion](#religion)
-  - [Unemployed (gender & nationality)](#unemployed-gender-nationality)
-      - [absolute numbers](#absolute-numbers)
-      - [as percentages](#as-percentages)
-  - [Compressing data](#compressing-data)
-  - [Female share](#female-share)
-      - [among german nationals](#among-german-nationals)
-  - [German population](#german-population)
-  - [Foreigners](#foreigners)
-  - [Counting NAs](#counting-nas)
-  - [Explore correlations](#explore-correlations)
-      - [simple use of cor()](#simple-use-of-cor)
-      - [the correlate package](#the-correlate-package)
-  - [Next steps](#next-steps)
-  - [Highly Correlated variables](#highly-correlated-variables)
-  - [linear models](#linear-models)
-
-## Brief exploratory analysis
+# Brief exploratory analysis
 
 This is a brief EDA of Munich stats.
 
-## Data Source
+## Data
+
+### source
 
 Thanks to **Statistische Amt München** for making the data available on
 a monthly basis. They make way more data available, these are solely
@@ -48,224 +20,419 @@ Official Data exploration portal:
 Data here is extracted from Excel, processed into data.frames and
 correlation charts
 
-# Cinema visitors (monthly trends)
+### raw
+
+The raw data is a list of data-frames
 
 ``` r
-##########################
-# exploratory charts
-dat$KINOS %>%
-  mutate(Month = as.Date(paste0(MONAT,'01'), format = '%Y%m%d')) %>%
-  ggplot(., aes(x=Month, y = WERT, group=AUSPRAEGUNG)) + 
-    geom_line() + 
-    facet_wrap(~AUSPRAEGUNG) +
-    theme_classic()+ 
-    geom_smooth() + scale_y_continuous(labels = scales::comma) + ggtitle("monthly trend - Cinema Visitors")
+as.data.frame(lapply(dat, dim)) %>% 
+  rownames_to_column() %>%
+  kable()
 ```
 
-    ## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
+<table>
 
-![](Munich_numbers_files/figure-gfm/charts_kinos-1.png)<!-- -->
+<thead>
 
-# weather trends
+<tr>
 
-``` r
-dat$WITTERUNG %>%
-  filter(MONATSZAHL %in% c("Sonnenschein", "Lufttemperatur")) %>%
-  mutate(Month = as.Date(paste0(MONAT,'01'), format = '%Y%m%d')) %>%
-  ggplot(., aes(x=Month, y = WERT, group=AUSPRAEGUNG)) + 
-  geom_point() + 
-  facet_wrap(~AUSPRAEGUNG, scales = "free") +
-  theme_classic()+ 
-  geom_smooth() + scale_y_continuous(labels = scales::comma) + ggtitle("monthly weather trends")
-```
+<th style="text-align:left;">
 
-    ## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
+rowname
 
-![](Munich_numbers_files/figure-gfm/charts_weather-1.png)<!-- -->
+</th>
 
-``` r
-#ggsave("monthly weather trends.png", dpi=400, dev='png', height=4, width=5, units="in", scale = 2)
-```
+<th style="text-align:right;">
 
-# Tourist trends
+INHALTSÜBERSICHT
 
-``` r
-dat$TOURISMUS %>%
-  filter(MONATSZAHL %in% c("Gäste")) %>%
-  mutate(Month = as.Date(paste0(MONAT,'01'), format = '%Y%m%d')) %>%
-  ggplot(., aes(x=Month, y = WERT, group=AUSPRAEGUNG)) + 
-  geom_line() + 
-  facet_wrap(~AUSPRAEGUNG, scales = "free") +
-  theme_classic()+ 
-  geom_smooth() + scale_y_continuous(labels = scales::comma) + ggtitle("monthly trend - Turist guests")
-```
+</th>
 
-    ## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
+<th style="text-align:right;">
 
-![](Munich_numbers_files/figure-gfm/charts_tourism-1.png)<!-- -->
+ARBEITSMARKT
 
-# Population trends (by gender)
+</th>
 
-## Inhabitants (all & gender)
+<th style="text-align:right;">
 
-``` r
-dat$BEVÖLKERUNG %>%
-  filter(MONATSZAHL %in% c("Geschlecht und Staatsangehörigkeit")) %>%
-  filter(str_detect(AUSPRAEGUNG, 'Einwohner')) %>%
-  mutate(Month = as.Date(paste0(MONAT,'01'), format = '%Y%m%d')) %>%
-  arrange(-WERT) %>% # sort
-  mutate_at(vars(AUSPRAEGUNG), funs(factor(., levels=unique(.)))) %>% # convert to factor
-  ggplot(., aes(x=Month, y = WERT, group=AUSPRAEGUNG)) + 
-  geom_line() + 
-  facet_wrap(~AUSPRAEGUNG) +
-  theme_classic()+ 
-  scale_y_continuous(labels = scales::comma) + ggtitle("Munich Inhabitants (male, female, all)")
-```
+BAUEN
 
-    ## Warning: funs() is soft deprecated as of dplyr 0.8.0
-    ## please use list() instead
-    ## 
-    ##   # Before:
-    ##   funs(name = f(.))
-    ## 
-    ##   # After: 
-    ##   list(name = ~ f(.))
-    ## This warning is displayed once per session.
+</th>
 
-![](Munich_numbers_files/figure-gfm/charts_population_all-1.png)<!-- -->
+<th style="text-align:right;">
 
-## German inhabitants (all & gender)
+BEVÖLKERUNG
 
-``` r
-dat$BEVÖLKERUNG %>%
-  filter(MONATSZAHL %in% c("Geschlecht und Staatsangehörigkeit")) %>%
-  filter(str_detect(AUSPRAEGUNG, 'Deutsche')) %>%
-  mutate(Month = as.Date(paste0(MONAT,'01'), format = '%Y%m%d')) %>%
-  arrange(-WERT) %>% # sort
-  mutate_at(vars(AUSPRAEGUNG), funs(factor(., levels=unique(.)))) %>% # convert to factor
-  ggplot(., aes(x=Month, y = WERT, group=AUSPRAEGUNG)) + 
-  geom_line() + 
-  facet_wrap(~AUSPRAEGUNG) +
-  theme_classic()+ 
-  scale_y_continuous(labels = scales::comma) + ggtitle("Germans in Munich (male, female, all)")
-```
+</th>
 
-![](Munich_numbers_files/figure-gfm/charts_population_german-1.png)<!-- -->
+<th style="text-align:right;">
 
-## Foreign inhabitants (all & gender)
+EINBÜRGERUNGEN
 
-``` r
-dat$BEVÖLKERUNG %>%
-  filter(MONATSZAHL %in% c("Geschlecht und Staatsangehörigkeit")) %>%
-  filter(str_detect(AUSPRAEGUNG, 'Ausländer')) %>%
-  mutate(Month = as.Date(paste0(MONAT,'01'), format = '%Y%m%d')) %>%
-  arrange(-WERT) %>% # sort
-  mutate_at(vars(AUSPRAEGUNG), funs(factor(., levels=unique(.)))) %>% # convert to factor
-  ggplot(., aes(x=Month, y = WERT, group=AUSPRAEGUNG)) + 
-  geom_line() + 
-  facet_wrap(~AUSPRAEGUNG) +
-  theme_classic()+ 
-  scale_y_continuous(labels = scales::comma) + ggtitle("Foreigners in Munich (male, female, all)")
-```
+</th>
 
-![](Munich_numbers_files/figure-gfm/charts_population_foreign-1.png)<!-- -->
+<th style="text-align:right;">
 
-## Family status
+FEUERWEHR.MÜNCHEN
 
-``` r
-dat$BEVÖLKERUNG %>%
-  filter(MONATSZAHL %in% c("Familienstand")) %>%
-  mutate(Month = as.Date(paste0(MONAT,'01'), format = '%Y%m%d')) %>%
-  arrange(-WERT) %>% # sort
-  mutate_at(vars(AUSPRAEGUNG), funs(factor(., levels=unique(.)))) %>% # convert to factor
-  ggplot(., aes(x=Month, y = WERT, group=AUSPRAEGUNG)) + 
-  geom_line() + 
-  facet_wrap(~AUSPRAEGUNG, scales = "free") +
-  theme_classic()+ 
-  scale_y_continuous(labels = scales::comma) + ggtitle("monthly trend - population by family status")
-```
+</th>
 
-![](Munich_numbers_files/figure-gfm/charts_population-1.png)<!-- -->
+<th style="text-align:right;">
 
-``` r
-#ggsave("monthly trend - population by family status.png", dpi=400, dev='png', height=4, width=5, units="in", scale = 2)
-```
+FLUGVERKEHR
 
-## Age groups
+</th>
 
-``` r
-dat$BEVÖLKERUNG %>%
-    filter(MONATSZAHL %in% c("Altersgruppen")) %>%
-    mutate(Month = as.Date(paste0(MONAT,'01'), format = '%Y%m%d')) %>%
-    arrange(-WERT) %>% # sort
-    mutate_at(vars(AUSPRAEGUNG), funs(factor(., levels=unique(.)))) %>% # convert to factor
-    ggplot(., aes(x=Month, y = WERT, group=AUSPRAEGUNG)) + 
-    geom_line() + 
-    facet_wrap(~AUSPRAEGUNG, scales = "free") +
-    theme_classic()+ 
-    geom_smooth() + scale_y_continuous(labels = scales::comma) + ggtitle("Population by age group")
-```
+<th style="text-align:right;">
 
-    ## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
+FREIZEIT
 
-![](Munich_numbers_files/figure-gfm/charts_population_by_age-1.png)<!-- -->
+</th>
 
-## Religion
+<th style="text-align:right;">
 
-``` r
-dat$BEVÖLKERUNG %>%
-    filter(MONATSZAHL %in% c("Religionszugehörigkeit")) %>%
-    mutate(Month = as.Date(paste0(MONAT,'01'), format = '%Y%m%d')) %>%
-    ggplot(., aes(x=Month, y = WERT, group=AUSPRAEGUNG)) + 
-    geom_line() + 
-    facet_wrap(~AUSPRAEGUNG, scales = "free") +
-    theme_classic()+ 
-    geom_smooth() + scale_y_continuous(labels = scales::comma) + ggtitle("Religion in Munich")
-```
+KFZ.Bestand
 
-    ## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
+</th>
 
-![](Munich_numbers_files/figure-gfm/charts_population_religion-1.png)<!-- -->
+<th style="text-align:right;">
 
-# Unemployed (gender & nationality)
+KFZ.Neuzulassungen
 
-## absolute numbers
+</th>
 
-``` r
-dat$ARBEITSMARKT %>%
-  filter(MONATSZAHL %in% c("Arbeitslose")) %>%
-  filter(AUSPRAEGUNG %in% c("insgesamt","Frauen","Männer","Deutsche","Deutsche", "Ausländer/innen", "Langzeitarbeitslose")) %>%
-  mutate(Month = as.Date(paste0(MONAT,'01'), format = '%Y%m%d')) %>%
-  arrange(-WERT) %>% # sort
-  mutate_at(vars(AUSPRAEGUNG), funs(factor(., levels=unique(.)))) %>% # convert to factor
-  ggplot(., aes(x=Month, y = WERT, group=AUSPRAEGUNG)) + 
-  geom_line() + 
-  facet_wrap(~AUSPRAEGUNG, scales = "free") +
-  theme_classic()+ 
-  scale_y_continuous(labels = scales::comma) + ggtitle("Unemployed in Munich (#)")
-```
+<th style="text-align:right;">
 
-![](Munich_numbers_files/figure-gfm/charts_unemployed_absolute-1.png)<!-- -->
+KINOS
 
-## as percentages
+</th>
 
-``` r
-dat$ARBEITSMARKT %>%
-  filter(MONATSZAHL %in% c("Arbeitslosenquote")) %>%
-  filter(AUSPRAEGUNG %in% c("abh. ziv. Erwerbspersonen", "alle ziv. Erwerbspersonen")) %>%
-  mutate(Month = as.Date(paste0(MONAT,'01'), format = '%Y%m%d')) %>%
-  arrange(-WERT) %>% # sort
-  mutate_at(vars(AUSPRAEGUNG), funs(factor(., levels=unique(.)))) %>% # convert to factor
-  ggplot(., aes(x=Month, y = WERT, group=AUSPRAEGUNG)) + 
-  geom_line() + 
-  facet_wrap(~AUSPRAEGUNG, scales = "free") +
-  theme_classic()+ 
-  scale_y_continuous(labels = scales::comma) + ggtitle("Unemployment rate in Munich")
-```
+<th style="text-align:right;">
 
-![](Munich_numbers_files/figure-gfm/charts_unemployed_percent-1.png)<!-- -->
+MUSEEN
 
-# Compressing data
+</th>
+
+<th style="text-align:right;">
+
+ORCHESTER
+
+</th>
+
+<th style="text-align:right;">
+
+SOZIALE.LEISTUNGEN
+
+</th>
+
+<th style="text-align:right;">
+
+THEATER
+
+</th>
+
+<th style="text-align:right;">
+
+TOURISMUS
+
+</th>
+
+<th style="text-align:right;">
+
+VERKEHRSUNFÄLLE
+
+</th>
+
+<th style="text-align:right;">
+
+WIRTSCHAFT
+
+</th>
+
+<th style="text-align:right;">
+
+WITTERUNG
+
+</th>
+
+<th style="text-align:right;">
+
+IMPRESSUM
+
+</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+
+<td style="text-align:left;">
+
+1
+
+</td>
+
+<td style="text-align:right;">
+
+288
+
+</td>
+
+<td style="text-align:right;">
+
+2119
+
+</td>
+
+<td style="text-align:right;">
+
+720
+
+</td>
+
+<td style="text-align:right;">
+
+19109
+
+</td>
+
+<td style="text-align:right;">
+
+660
+
+</td>
+
+<td style="text-align:right;">
+
+1914
+
+</td>
+
+<td style="text-align:right;">
+
+1880
+
+</td>
+
+<td style="text-align:right;">
+
+1639
+
+</td>
+
+<td style="text-align:right;">
+
+4984
+
+</td>
+
+<td style="text-align:right;">
+
+2592
+
+</td>
+
+<td style="text-align:right;">
+
+228
+
+</td>
+
+<td style="text-align:right;">
+
+2068
+
+</td>
+
+<td style="text-align:right;">
+
+1416
+
+</td>
+
+<td style="text-align:right;">
+
+2055
+
+</td>
+
+<td style="text-align:right;">
+
+4056
+
+</td>
+
+<td style="text-align:right;">
+
+954
+
+</td>
+
+<td style="text-align:right;">
+
+1596
+
+</td>
+
+<td style="text-align:right;">
+
+4462
+
+</td>
+
+<td style="text-align:right;">
+
+1638
+
+</td>
+
+<td style="text-align:right;">
+
+13
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+2
+
+</td>
+
+<td style="text-align:right;">
+
+7
+
+</td>
+
+<td style="text-align:right;">
+
+9
+
+</td>
+
+<td style="text-align:right;">
+
+9
+
+</td>
+
+<td style="text-align:right;">
+
+9
+
+</td>
+
+<td style="text-align:right;">
+
+9
+
+</td>
+
+<td style="text-align:right;">
+
+9
+
+</td>
+
+<td style="text-align:right;">
+
+9
+
+</td>
+
+<td style="text-align:right;">
+
+9
+
+</td>
+
+<td style="text-align:right;">
+
+9
+
+</td>
+
+<td style="text-align:right;">
+
+9
+
+</td>
+
+<td style="text-align:right;">
+
+9
+
+</td>
+
+<td style="text-align:right;">
+
+9
+
+</td>
+
+<td style="text-align:right;">
+
+9
+
+</td>
+
+<td style="text-align:right;">
+
+9
+
+</td>
+
+<td style="text-align:right;">
+
+9
+
+</td>
+
+<td style="text-align:right;">
+
+9
+
+</td>
+
+<td style="text-align:right;">
+
+9
+
+</td>
+
+<td style="text-align:right;">
+
+9
+
+</td>
+
+<td style="text-align:right;">
+
+9
+
+</td>
+
+<td style="text-align:right;">
+
+1
+
+</td>
+
+</tr>
+
+</tbody>
+
+</table>
+
+### aggregated
 
 We’ll now compress the **original disparated data** in one compact
 data.frame For that, we create dynamic column names and aggregate the
@@ -317,10 +484,203 @@ dim(dsFinal)
     ## [1] 236 288
 
 ``` r
-dsFinal[1:10,1:2] %>% kable()
+# dsFinal[1:10,1:2] %>% kable()
+# colMeans(dsFinal, na.rm = T) %>% kable()
+# str(dsFinal)
+##########################
 ```
 
-<table>
+# General Trends (monthly)
+
+## Cinema visitors
+
+``` r
+##########################
+# exploratory charts
+dat$KINOS %>%
+  mutate(Month = as.Date(paste0(MONAT,'01'), format = '%Y%m%d')) %>%
+  ggplot(., aes(x=Month, y = WERT, group=AUSPRAEGUNG)) + 
+    geom_line() + 
+    facet_wrap(~AUSPRAEGUNG) +
+    theme_classic()+ 
+    geom_smooth() + scale_y_continuous(labels = scales::comma) + ggtitle("Cinema Visitors")
+```
+
+![](Munich_numbers_files/figure-gfm/charts_kinos-1.png)<!-- -->
+
+## weather trends
+
+### Sun & temperature
+
+``` r
+dat$WITTERUNG %>%
+  filter(MONATSZAHL %in% c("Sonnenschein", "Lufttemperatur")) %>%
+  mutate(Month = as.Date(paste0(MONAT,'01'), format = '%Y%m%d')) %>%
+  ggplot(., aes(x=Month, y = WERT, group=AUSPRAEGUNG)) + 
+  geom_line() + 
+  facet_wrap(~AUSPRAEGUNG, scales = "free") +
+  theme_classic()+ 
+  geom_smooth() + scale_y_continuous(labels = scales::comma) + ggtitle("monthly weather trends")
+```
+
+![](Munich_numbers_files/figure-gfm/charts_weather-1.png)<!-- -->
+
+### Rain
+
+``` r
+dat$WITTERUNG %>%
+  filter(MONATSZAHL %in% c("Niederschlag")) %>%
+  mutate(Month = as.Date(paste0(MONAT,'01'), format = '%Y%m%d')) %>%
+  ggplot(., aes(x=Month, y = WERT, group=AUSPRAEGUNG)) + 
+  geom_line() + 
+  facet_wrap(~AUSPRAEGUNG, scales = "free", nrow=2) +
+  theme_classic()+ 
+  geom_smooth() + scale_y_continuous(labels = scales::comma) + ggtitle("monthly weather trends")
+```
+
+![](Munich_numbers_files/figure-gfm/charts_weather_rain-1.png)<!-- -->
+
+## Tourists
+
+``` r
+dat$TOURISMUS %>%
+  filter(MONATSZAHL %in% c("Gäste")) %>%
+  mutate(Month = as.Date(paste0(MONAT,'01'), format = '%Y%m%d')) %>%
+  ggplot(., aes(x=Month, y = WERT, group=AUSPRAEGUNG)) + 
+  geom_line() + 
+  facet_wrap(~AUSPRAEGUNG, scales = "free", nrow=3) +
+  theme_classic()+ 
+  geom_smooth() + scale_y_continuous(position = "right", labels = scales::comma) + ggtitle("monthly trend - Turist guests")
+```
+
+![](Munich_numbers_files/figure-gfm/charts_tourism-1.png)<!-- -->
+
+## Population
+
+### German population 2010-today
+
+``` r
+dsFinal %>%
+  rownames_to_column() %>%
+  select(rowname, `german population` =  `BEVÖLKERUNG - Geschlecht und Staatsangehörigkeit - Deutsche insgesamt`) %>%
+  mutate(Month = as.Date(paste0(rowname,'01'), format = '%Y%m%d')) %>%
+  filter(Month>='2010-01-01') %>%
+  ggplot(aes(x = Month))  + 
+    geom_line(aes(y = `german population`)) + 
+    theme_minimal() + 
+    scale_x_date(date_breaks = "1 year", date_labels = "%Y") + 
+    scale_y_continuous(position = "right", labels = scales::comma) 
+```
+
+    ## Warning: Removed 1 rows containing missing values (geom_path).
+
+![](Munich_numbers_files/figure-gfm/charts_population_germans_only-1.png)<!-- -->
+
+### Foreigners 2010-today
+
+``` r
+dsFinal %>%
+  rownames_to_column() %>%
+  select(rowname, `foreigners` = `BEVÖLKERUNG - Geschlecht und Staatsangehörigkeit - Ausländer/innen insgesamt`) %>%
+  mutate(Month = as.Date(paste0(rowname,'01'), format = '%Y%m%d')) %>%
+  filter(Month>='2010-01-01') %>%
+  ggplot(aes(x = Month))  + 
+    geom_line(aes(y = foreigners), linetype="twodash") + 
+    theme_minimal() + 
+    scale_x_date(date_breaks = "1 year", date_labels = "%Y") + 
+    scale_y_continuous(position = "right", labels = scales::comma) 
+```
+
+    ## Warning: Removed 1 rows containing missing values (geom_path).
+
+![](Munich_numbers_files/figure-gfm/charts_population_foreigners_only-1.png)<!-- -->
+
+### Inhabitants (all & gender)
+
+``` r
+dat$BEVÖLKERUNG %>%
+  filter(MONATSZAHL %in% c("Geschlecht und Staatsangehörigkeit")) %>%
+  filter(str_detect(AUSPRAEGUNG, 'Einwohner')) %>%
+  mutate(Month = as.Date(paste0(MONAT,'01'), format = '%Y%m%d')) %>%
+  arrange(-WERT) %>% # sort
+  mutate_at(vars(AUSPRAEGUNG), funs(factor(., levels=unique(.)))) %>% # convert to factor
+  ggplot(., aes(x=Month, y = WERT, group=AUSPRAEGUNG)) + 
+  geom_line() + 
+  facet_wrap(~AUSPRAEGUNG) +
+  theme_classic()+ 
+  scale_y_continuous(labels = scales::comma) + ggtitle("Munich Inhabitants (male, female, all)")
+```
+
+    ## Warning: funs() is soft deprecated as of dplyr 0.8.0
+    ## please use list() instead
+    ## 
+    ##   # Before:
+    ##   funs(name = f(.))
+    ## 
+    ##   # After: 
+    ##   list(name = ~ f(.))
+    ## This warning is displayed once per session.
+
+![](Munich_numbers_files/figure-gfm/charts_population_all-1.png)<!-- -->
+
+### German inhabitants (all & gender)
+
+``` r
+dat$BEVÖLKERUNG %>%
+  filter(MONATSZAHL %in% c("Geschlecht und Staatsangehörigkeit")) %>%
+  filter(str_detect(AUSPRAEGUNG, 'Deutsche')) %>%
+  mutate(Month = as.Date(paste0(MONAT,'01'), format = '%Y%m%d')) %>%
+  arrange(-WERT) %>% # sort
+  mutate_at(vars(AUSPRAEGUNG), funs(factor(., levels=unique(.)))) %>% # convert to factor
+  ggplot(., aes(x=Month, y = WERT, group=AUSPRAEGUNG)) + 
+  geom_line() + 
+  facet_wrap(~AUSPRAEGUNG) +
+  theme_classic()+ 
+  scale_y_continuous(labels = scales::comma) + ggtitle("Germans in Munich (male, female, all)")
+```
+
+![](Munich_numbers_files/figure-gfm/charts_population_german-1.png)<!-- -->
+
+### Foreign inhabitants (all & gender)
+
+``` r
+dat$BEVÖLKERUNG %>%
+  filter(MONATSZAHL %in% c("Geschlecht und Staatsangehörigkeit")) %>%
+  filter(str_detect(AUSPRAEGUNG, 'Ausländer')) %>%
+  mutate(Month = as.Date(paste0(MONAT,'01'), format = '%Y%m%d')) %>%
+  arrange(-WERT) %>% # sort
+  mutate_at(vars(AUSPRAEGUNG), funs(factor(., levels=unique(.)))) %>% # convert to factor
+  ggplot(., aes(x=Month, y = WERT, group=AUSPRAEGUNG)) + 
+  geom_line() + 
+  facet_wrap(~AUSPRAEGUNG) +
+  theme_classic()+ 
+  scale_y_continuous(labels = scales::comma) + ggtitle("Foreigners in Munich (male, female, all)")
+```
+
+![](Munich_numbers_files/figure-gfm/charts_population_foreign-1.png)<!-- -->
+
+### Female share
+
+#### among german nationals
+
+``` r
+dsFinal %>% 
+  rownames_to_column() %>%
+  mutate(
+    year = substring(rowname, 0, 4), 
+    'german_female' = `BEVÖLKERUNG - Geschlecht und Staatsangehörigkeit - Deutsche weiblich`,
+   'german_all' = dsFinal$`BEVÖLKERUNG - Geschlecht und Staatsangehörigkeit - Deutsche insgesamt`) %>%
+  select(year, german_female, german_all) %>%
+  group_by(year) %>%
+  summarize(german_all=round(mean(german_all, na.rm = TRUE),0),
+            german_female = round(mean(german_female, na.rm = TRUE),0)
+            ) %>%
+  mutate(female_share = round(german_female/german_all, 2)) %>%
+  kable() %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
+```
+
+<table class="table table-striped table-hover table-condensed table-responsive" style="margin-left: auto; margin-right: auto;">
 
 <thead>
 
@@ -328,17 +688,25 @@ dsFinal[1:10,1:2] %>% kable()
 
 <th style="text-align:left;">
 
-</th>
-
-<th style="text-align:right;">
-
-WITTERUNG - Luftfeuchtigkeit - Mittlere relative Luftfeuchtigkeit
+year
 
 </th>
 
 <th style="text-align:right;">
 
-WITTERUNG - Lufttemperatur - Höchste Lufttemperatur
+german\_all
+
+</th>
+
+<th style="text-align:right;">
+
+german\_female
+
+</th>
+
+<th style="text-align:right;">
+
+female\_share
 
 </th>
 
@@ -352,19 +720,25 @@ WITTERUNG - Lufttemperatur - Höchste Lufttemperatur
 
 <td style="text-align:left;">
 
-200001
+2000
 
 </td>
 
 <td style="text-align:right;">
 
-85
+960111
 
 </td>
 
 <td style="text-align:right;">
 
-10.5
+514168
+
+</td>
+
+<td style="text-align:right;">
+
+0.54
 
 </td>
 
@@ -374,19 +748,25 @@ WITTERUNG - Lufttemperatur - Höchste Lufttemperatur
 
 <td style="text-align:left;">
 
-200002
+2001
 
 </td>
 
 <td style="text-align:right;">
 
-76
+970183
 
 </td>
 
 <td style="text-align:right;">
 
-19.6
+517712
+
+</td>
+
+<td style="text-align:right;">
+
+0.53
 
 </td>
 
@@ -396,19 +776,25 @@ WITTERUNG - Lufttemperatur - Höchste Lufttemperatur
 
 <td style="text-align:left;">
 
-200003
+2002
 
 </td>
 
 <td style="text-align:right;">
 
-73
+974597
 
 </td>
 
 <td style="text-align:right;">
 
-17.2
+518533
+
+</td>
+
+<td style="text-align:right;">
+
+0.53
 
 </td>
 
@@ -418,19 +804,25 @@ WITTERUNG - Lufttemperatur - Höchste Lufttemperatur
 
 <td style="text-align:left;">
 
-200004
+2003
 
 </td>
 
 <td style="text-align:right;">
 
-67
+975670
 
 </td>
 
 <td style="text-align:right;">
 
-27.5
+517904
+
+</td>
+
+<td style="text-align:right;">
+
+0.53
 
 </td>
 
@@ -440,19 +832,25 @@ WITTERUNG - Lufttemperatur - Höchste Lufttemperatur
 
 <td style="text-align:left;">
 
-200005
+2004
 
 </td>
 
 <td style="text-align:right;">
 
-70
+977249
 
 </td>
 
 <td style="text-align:right;">
 
-27.8
+517884
+
+</td>
+
+<td style="text-align:right;">
+
+0.53
 
 </td>
 
@@ -462,19 +860,25 @@ WITTERUNG - Lufttemperatur - Höchste Lufttemperatur
 
 <td style="text-align:left;">
 
-200006
+2005
 
 </td>
 
 <td style="text-align:right;">
 
-60
+984594
 
 </td>
 
 <td style="text-align:right;">
 
-32.1
+520386
+
+</td>
+
+<td style="text-align:right;">
+
+0.53
 
 </td>
 
@@ -484,19 +888,25 @@ WITTERUNG - Lufttemperatur - Höchste Lufttemperatur
 
 <td style="text-align:left;">
 
-200007
+2006
 
 </td>
 
 <td style="text-align:right;">
 
-74
+1007509
 
 </td>
 
 <td style="text-align:right;">
 
-29.1
+531108
+
+</td>
+
+<td style="text-align:right;">
+
+0.53
 
 </td>
 
@@ -506,19 +916,25 @@ WITTERUNG - Lufttemperatur - Höchste Lufttemperatur
 
 <td style="text-align:left;">
 
-200008
+2007
 
 </td>
 
 <td style="text-align:right;">
 
-70
+1031287
 
 </td>
 
 <td style="text-align:right;">
 
-33.5
+541959
+
+</td>
+
+<td style="text-align:right;">
+
+0.53
 
 </td>
 
@@ -528,19 +944,25 @@ WITTERUNG - Lufttemperatur - Höchste Lufttemperatur
 
 <td style="text-align:left;">
 
-200009
+2008
 
 </td>
 
 <td style="text-align:right;">
 
-85
+1045105
 
 </td>
 
 <td style="text-align:right;">
 
-26.0
+548027
+
+</td>
+
+<td style="text-align:right;">
+
+0.52
 
 </td>
 
@@ -550,19 +972,305 @@ WITTERUNG - Lufttemperatur - Höchste Lufttemperatur
 
 <td style="text-align:left;">
 
-200010
+2009
 
 </td>
 
 <td style="text-align:right;">
 
-88
+1052103
 
 </td>
 
 <td style="text-align:right;">
 
-25.6
+550959
+
+</td>
+
+<td style="text-align:right;">
+
+0.52
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+2010
+
+</td>
+
+<td style="text-align:right;">
+
+1059451
+
+</td>
+
+<td style="text-align:right;">
+
+553954
+
+</td>
+
+<td style="text-align:right;">
+
+0.52
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+2011
+
+</td>
+
+<td style="text-align:right;">
+
+1070394
+
+</td>
+
+<td style="text-align:right;">
+
+558116
+
+</td>
+
+<td style="text-align:right;">
+
+0.52
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+2012
+
+</td>
+
+<td style="text-align:right;">
+
+1081036
+
+</td>
+
+<td style="text-align:right;">
+
+562388
+
+</td>
+
+<td style="text-align:right;">
+
+0.52
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+2013
+
+</td>
+
+<td style="text-align:right;">
+
+1088920
+
+</td>
+
+<td style="text-align:right;">
+
+565732
+
+</td>
+
+<td style="text-align:right;">
+
+0.52
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+2014
+
+</td>
+
+<td style="text-align:right;">
+
+1094788
+
+</td>
+
+<td style="text-align:right;">
+
+567894
+
+</td>
+
+<td style="text-align:right;">
+
+0.52
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+2015
+
+</td>
+
+<td style="text-align:right;">
+
+1099356
+
+</td>
+
+<td style="text-align:right;">
+
+569554
+
+</td>
+
+<td style="text-align:right;">
+
+0.52
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+2016
+
+</td>
+
+<td style="text-align:right;">
+
+1103956
+
+</td>
+
+<td style="text-align:right;">
+
+571423
+
+</td>
+
+<td style="text-align:right;">
+
+0.52
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+2017
+
+</td>
+
+<td style="text-align:right;">
+
+1106840
+
+</td>
+
+<td style="text-align:right;">
+
+572479
+
+</td>
+
+<td style="text-align:right;">
+
+0.52
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+2018
+
+</td>
+
+<td style="text-align:right;">
+
+1105693
+
+</td>
+
+<td style="text-align:right;">
+
+571335
+
+</td>
+
+<td style="text-align:right;">
+
+0.52
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+2019
+
+</td>
+
+<td style="text-align:right;">
+
+1110235
+
+</td>
+
+<td style="text-align:right;">
+
+573240
+
+</td>
+
+<td style="text-align:right;">
+
+0.52
 
 </td>
 
@@ -572,27 +1280,7 @@ WITTERUNG - Lufttemperatur - Höchste Lufttemperatur
 
 </table>
 
-``` r
-#str(dsFinal)
-##########################
-```
-
-# Female share
-
-## among german nationals
-
-``` r
-plot(
-    rownames(dsFinal) 
-    , dsFinal$`BEVÖLKERUNG - Geschlecht und Staatsangehörigkeit - Deutsche weiblich`  / dsFinal$`BEVÖLKERUNG - Geschlecht und Staatsangehörigkeit - Deutsche insgesamt`
-    , xlab = "month"
-    , ylab = "% Female"
-     , main="% Female among Germans", 
-    type="o")
-```
-
-![](Munich_numbers_files/figure-gfm/female_share_germans-1.png)<!-- -->
-\#\# among foreigners
+#### among foreigners
 
 ``` r
 plot(
@@ -606,45 +1294,98 @@ plot(
 
 ![](Munich_numbers_files/figure-gfm/female_share_foreigners-1.png)<!-- -->
 
-# German population
+### Family status
 
 ``` r
-dsFinal %>%
-  rownames_to_column() %>%
-  select(rowname, `foreigners` = `BEVÖLKERUNG - Geschlecht und Staatsangehörigkeit - Ausländer/innen insgesamt`, `germans` =  `BEVÖLKERUNG - Geschlecht und Staatsangehörigkeit - Deutsche insgesamt`) %>%
-  mutate(Month = as.Date(paste0(rowname,'01'), format = '%Y%m%d')) %>%
-  filter(Month>='2010-01-01') %>%
-  ggplot(aes(x = Month))  + 
-    geom_line(aes(y = germans)) + 
-    theme_minimal() + 
-    scale_x_date(date_breaks = "1 year", date_labels = "%Y") + 
-    scale_y_continuous(labels = scales::comma) 
+dat$BEVÖLKERUNG %>%
+  filter(MONATSZAHL %in% c("Familienstand")) %>%
+  mutate(Month = as.Date(paste0(MONAT,'01'), format = '%Y%m%d')) %>%
+  arrange(-WERT) %>% # sort
+  mutate_at(vars(AUSPRAEGUNG), funs(factor(., levels=unique(.)))) %>% # convert to factor
+  ggplot(., aes(x=Month, y = WERT, group=AUSPRAEGUNG)) + 
+  geom_line() + 
+  facet_wrap(~AUSPRAEGUNG, scales = "free") +
+  theme_classic()+ 
+  scale_y_continuous(labels = scales::comma) + ggtitle("monthly trend - population by family status")
 ```
 
-    ## Warning: Removed 1 rows containing missing values (geom_path).
-
-![](Munich_numbers_files/figure-gfm/charts_population_germans_only-1.png)<!-- -->
-
-# Foreigners
+![](Munich_numbers_files/figure-gfm/charts_population-1.png)<!-- -->
 
 ``` r
-dsFinal %>%
-  rownames_to_column() %>%
-  select(rowname, `foreigners` = `BEVÖLKERUNG - Geschlecht und Staatsangehörigkeit - Ausländer/innen insgesamt`, `germans` =  `BEVÖLKERUNG - Geschlecht und Staatsangehörigkeit - Deutsche insgesamt`) %>%
-  mutate(Month = as.Date(paste0(rowname,'01'), format = '%Y%m%d')) %>%
-  filter(Month>='2010-01-01') %>%
-  ggplot(aes(x = Month))  + 
-    geom_line(aes(y = foreigners, linetype="twodash")) + 
-    theme_minimal() + 
-    scale_x_date(date_breaks = "1 year", date_labels = "%Y") + 
-    scale_y_continuous(labels = scales::comma) 
+#ggsave("monthly trend - population by family status.png", dpi=400, dev='png', height=4, width=5, units="in", scale = 2)
 ```
 
-    ## Warning: Removed 1 rows containing missing values (geom_path).
+### Age groups
 
-![](Munich_numbers_files/figure-gfm/charts_population_foreigners_only-1.png)<!-- -->
+``` r
+dat$BEVÖLKERUNG %>%
+    filter(MONATSZAHL %in% c("Altersgruppen")) %>%
+    mutate(Month = as.Date(paste0(MONAT,'01'), format = '%Y%m%d')) %>%
+    arrange(-WERT) %>% # sort
+    mutate_at(vars(AUSPRAEGUNG), funs(factor(., levels=unique(.)))) %>% # convert to factor
+    ggplot(., aes(x=Month, y = WERT, group=AUSPRAEGUNG)) + 
+    geom_line() + 
+    facet_wrap(~AUSPRAEGUNG, scales = "free") +
+    theme_classic()+ 
+    geom_smooth() + scale_y_continuous(labels = scales::comma) + ggtitle("Population by age group")
+```
 
-# Counting NAs
+![](Munich_numbers_files/figure-gfm/charts_population_by_age-1.png)<!-- -->
+
+## Religion
+
+``` r
+dat$BEVÖLKERUNG %>%
+    filter(MONATSZAHL %in% c("Religionszugehörigkeit")) %>%
+    mutate(Month = as.Date(paste0(MONAT,'01'), format = '%Y%m%d')) %>%
+    ggplot(., aes(x=Month, y = WERT, group=AUSPRAEGUNG)) + 
+    geom_line() + 
+    facet_wrap(~AUSPRAEGUNG, scales = "free") +
+    theme_classic()+ 
+    geom_smooth() + scale_y_continuous(labels = scales::comma) + ggtitle("Religion in Munich")
+```
+
+![](Munich_numbers_files/figure-gfm/charts_population_religion-1.png)<!-- -->
+
+## Unemployment (gender & nationality)
+
+### absolute numbers
+
+``` r
+dat$ARBEITSMARKT %>%
+  filter(MONATSZAHL %in% c("Arbeitslose")) %>%
+  filter(AUSPRAEGUNG %in% c("insgesamt","Frauen","Männer","Deutsche","Deutsche", "Ausländer/innen", "Langzeitarbeitslose")) %>%
+  mutate(Month = as.Date(paste0(MONAT,'01'), format = '%Y%m%d')) %>%
+  arrange(-WERT) %>% # sort
+  mutate_at(vars(AUSPRAEGUNG), funs(factor(., levels=unique(.)))) %>% # convert to factor
+  ggplot(., aes(x=Month, y = WERT, group=AUSPRAEGUNG)) + 
+  geom_line() + 
+  facet_wrap(~AUSPRAEGUNG, scales = "free") +
+  theme_classic()+ 
+  scale_y_continuous(labels = scales::comma) + ggtitle("Unemployed in Munich (#)")
+```
+
+![](Munich_numbers_files/figure-gfm/charts_unemployed_absolute-1.png)<!-- -->
+
+### as percentages
+
+``` r
+dat$ARBEITSMARKT %>%
+  filter(MONATSZAHL %in% c("Arbeitslosenquote")) %>%
+  filter(AUSPRAEGUNG %in% c("abh. ziv. Erwerbspersonen", "alle ziv. Erwerbspersonen")) %>%
+  mutate(Month = as.Date(paste0(MONAT,'01'), format = '%Y%m%d')) %>%
+  arrange(-WERT) %>% # sort
+  mutate_at(vars(AUSPRAEGUNG), funs(factor(., levels=unique(.)))) %>% # convert to factor
+  ggplot(., aes(x=Month, y = WERT, group=AUSPRAEGUNG)) + 
+  geom_line() + 
+  facet_wrap(~AUSPRAEGUNG, scales = "free") +
+  theme_classic()+ 
+  scale_y_continuous(labels = scales::comma) + ggtitle("Unemployment rate in Munich")
+```
+
+![](Munich_numbers_files/figure-gfm/charts_unemployed_percent-1.png)<!-- -->
+
+# Counting NAs (missing data)
 
 ``` r
 ##########################
@@ -1176,7 +1917,7 @@ dsAgg %>%
   - explore some highly correlated numbers
   - **BEWARE OF CONFOUNDING VARIABLES**
 
-# Highly Correlated variables
+## Highly Correlated variables
 
 These are pure sample examples out of
 \~100
@@ -1195,7 +1936,7 @@ plot(dsFinal$`BEVÖLKERUNG - Familienstand - geschieden`, dsFinal$`KFZ-Bestand -
 
 ![](Munich_numbers_files/figure-gfm/prepare_correlation_charts-2.png)<!-- -->
 
-# linear models
+## linear models
 
 Handworkers by number of diesel cars and total
 population
