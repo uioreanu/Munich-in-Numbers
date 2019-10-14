@@ -5,6 +5,11 @@ date: "10/6/2019"
 always_allow_html: yes
 output: 
   github_document:
+    fig_width: 5
+    fig_height: 5
+    dev: jpeg
+    toc: true
+    toc_depth: 2
   html_document:
     code_folding: hide
     toc: true
@@ -261,15 +266,26 @@ dsFinal %>%
   mutate(
     year = substring(rowname, 0, 4), 
     'german_female' = `BEVÖLKERUNG - Geschlecht und Staatsangehörigkeit - Deutsche weiblich`,
-   'german_all' = dsFinal$`BEVÖLKERUNG - Geschlecht und Staatsangehörigkeit - Deutsche insgesamt`) %>%
-  select(year, german_female, german_all) %>%
+    'foreign_female' = `BEVÖLKERUNG - Geschlecht und Staatsangehörigkeit - Ausländer weiblich`,
+    'all_german' = `BEVÖLKERUNG - Geschlecht und Staatsangehörigkeit - Deutsche insgesamt`,
+    'all_female' = `BEVÖLKERUNG - Geschlecht und Staatsangehörigkeit - Einwohner weiblich`
+   ) %>%
+  select(year, german_female, foreign_female, all_german, all_female) %>%
   group_by(year) %>%
-  summarize(german_all=round(mean(german_all, na.rm = TRUE),0),
-            german_female = round(mean(german_female, na.rm = TRUE),0)
+  summarize(
+            german_female = round(mean(german_female, na.rm = TRUE),0),
+            foreign_female = round(mean(foreign_female, na.rm = TRUE),0),
+            all_german=round(mean(all_german, na.rm = TRUE),0),
+            all_female=round(mean(all_female, na.rm = TRUE),0)
             ) %>%
-  mutate(female_share = round(german_female/german_all, 2)) %>%
-  kable() %>%
-  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
+  mutate(
+    female_share_among_germans = round(german_female/all_german, 2),
+    german_female_share = round(german_female/all_female, 2)
+    ) %>%
+  kable(format.args = list(decimal.mark = ".", big.mark = ",")) %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive")) %>%
+  add_header_above(c(" ", "in thousands" = 4, "percentages" = 2))
+
 
 
 ```
