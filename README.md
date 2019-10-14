@@ -3,6 +3,24 @@ Munich in numbers
 CU
 10/6/2019
 
+  - [Brief exploratory analysis](#brief-exploratory-analysis)
+      - [Data](#data)
+  - [General Trends (monthly)](#general-trends-monthly)
+      - [Cinema visitors](#cinema-visitors)
+      - [weather trends](#weather-trends)
+      - [Tourists](#tourists)
+      - [Population](#population)
+      - [Religion](#religion)
+      - [Unemployment (gender &
+        nationality)](#unemployment-gender-nationality)
+  - [Counting NAs (missing data)](#counting-nas-missing-data)
+  - [Explore correlations](#explore-correlations)
+      - [simple use of cor()](#simple-use-of-cor)
+      - [the correlate package](#the-correlate-package)
+  - [Next steps](#next-steps)
+      - [Highly Correlated variables](#highly-correlated-variables)
+      - [linear models](#linear-models)
+
 # Brief exploratory analysis
 
 This is a brief EDA of Munich stats.
@@ -506,7 +524,7 @@ dat$KINOS %>%
     geom_smooth() + scale_y_continuous(labels = scales::comma) + ggtitle("Cinema Visitors")
 ```
 
-![](Munich_numbers_files/figure-gfm/charts_kinos-1.png)<!-- -->
+![](Munich_numbers_files/figure-gfm/charts_kinos-1.jpeg)<!-- -->
 
 ## weather trends
 
@@ -523,7 +541,7 @@ dat$WITTERUNG %>%
   geom_smooth() + scale_y_continuous(labels = scales::comma) + ggtitle("monthly weather trends")
 ```
 
-![](Munich_numbers_files/figure-gfm/charts_weather-1.png)<!-- -->
+![](Munich_numbers_files/figure-gfm/charts_weather-1.jpeg)<!-- -->
 
 ### Rain
 
@@ -538,7 +556,7 @@ dat$WITTERUNG %>%
   geom_smooth() + scale_y_continuous(labels = scales::comma) + ggtitle("monthly weather trends")
 ```
 
-![](Munich_numbers_files/figure-gfm/charts_weather_rain-1.png)<!-- -->
+![](Munich_numbers_files/figure-gfm/charts_weather_rain-1.jpeg)<!-- -->
 
 ## Tourists
 
@@ -553,7 +571,7 @@ dat$TOURISMUS %>%
   geom_smooth() + scale_y_continuous(position = "right", labels = scales::comma) + ggtitle("monthly trend - Turist guests")
 ```
 
-![](Munich_numbers_files/figure-gfm/charts_tourism-1.png)<!-- -->
+![](Munich_numbers_files/figure-gfm/charts_tourism-1.jpeg)<!-- -->
 
 ## Population
 
@@ -574,7 +592,7 @@ dsFinal %>%
 
     ## Warning: Removed 1 rows containing missing values (geom_path).
 
-![](Munich_numbers_files/figure-gfm/charts_population_germans_only-1.png)<!-- -->
+![](Munich_numbers_files/figure-gfm/charts_population_germans_only-1.jpeg)<!-- -->
 
 ### Foreigners 2010-today
 
@@ -593,7 +611,7 @@ dsFinal %>%
 
     ## Warning: Removed 1 rows containing missing values (geom_path).
 
-![](Munich_numbers_files/figure-gfm/charts_population_foreigners_only-1.png)<!-- -->
+![](Munich_numbers_files/figure-gfm/charts_population_foreigners_only-1.jpeg)<!-- -->
 
 ### Inhabitants (all & gender)
 
@@ -621,7 +639,7 @@ dat$BEVÖLKERUNG %>%
     ##   list(name = ~ f(.))
     ## This warning is displayed once per session.
 
-![](Munich_numbers_files/figure-gfm/charts_population_all-1.png)<!-- -->
+![](Munich_numbers_files/figure-gfm/charts_population_all-1.jpeg)<!-- -->
 
 ### German inhabitants (all & gender)
 
@@ -639,7 +657,7 @@ dat$BEVÖLKERUNG %>%
   scale_y_continuous(labels = scales::comma) + ggtitle("Germans in Munich (male, female, all)")
 ```
 
-![](Munich_numbers_files/figure-gfm/charts_population_german-1.png)<!-- -->
+![](Munich_numbers_files/figure-gfm/charts_population_german-1.jpeg)<!-- -->
 
 ### Foreign inhabitants (all & gender)
 
@@ -657,7 +675,7 @@ dat$BEVÖLKERUNG %>%
   scale_y_continuous(labels = scales::comma) + ggtitle("Foreigners in Munich (male, female, all)")
 ```
 
-![](Munich_numbers_files/figure-gfm/charts_population_foreign-1.png)<!-- -->
+![](Munich_numbers_files/figure-gfm/charts_population_foreign-1.jpeg)<!-- -->
 
 ### Female share
 
@@ -669,20 +687,59 @@ dsFinal %>%
   mutate(
     year = substring(rowname, 0, 4), 
     'german_female' = `BEVÖLKERUNG - Geschlecht und Staatsangehörigkeit - Deutsche weiblich`,
-   'german_all' = dsFinal$`BEVÖLKERUNG - Geschlecht und Staatsangehörigkeit - Deutsche insgesamt`) %>%
-  select(year, german_female, german_all) %>%
+    'foreign_female' = `BEVÖLKERUNG - Geschlecht und Staatsangehörigkeit - Ausländer weiblich`,
+    'all_german' = `BEVÖLKERUNG - Geschlecht und Staatsangehörigkeit - Deutsche insgesamt`,
+    'all_female' = `BEVÖLKERUNG - Geschlecht und Staatsangehörigkeit - Einwohner weiblich`
+   ) %>%
+  select(year, german_female, foreign_female, all_german, all_female) %>%
   group_by(year) %>%
-  summarize(german_all=round(mean(german_all, na.rm = TRUE),0),
-            german_female = round(mean(german_female, na.rm = TRUE),0)
+  summarize(
+            german_female = round(mean(german_female, na.rm = TRUE),0),
+            foreign_female = round(mean(foreign_female, na.rm = TRUE),0),
+            all_german=round(mean(all_german, na.rm = TRUE),0),
+            all_female=round(mean(all_female, na.rm = TRUE),0)
             ) %>%
-  mutate(female_share = round(german_female/german_all, 2)) %>%
-  kable() %>%
-  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
+  mutate(
+    female_share_among_germans = round(german_female/all_german, 2),
+    german_female_share = round(german_female/all_female, 2)
+    ) %>%
+  kable(format.args = list(decimal.mark = ".", big.mark = ",")) %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive")) %>%
+  add_header_above(c(" ", "in thousands" = 4, "percentages" = 2))
 ```
 
 <table class="table table-striped table-hover table-condensed table-responsive" style="margin-left: auto; margin-right: auto;">
 
 <thead>
+
+<tr>
+
+<th style="border-bottom:hidden" colspan="1">
+
+</th>
+
+<th style="border-bottom:hidden; padding-bottom:0; padding-left:3px;padding-right:3px;text-align: center; " colspan="4">
+
+<div style="border-bottom: 1px solid #ddd; padding-bottom: 5px; ">
+
+in
+thousands
+
+</div>
+
+</th>
+
+<th style="border-bottom:hidden; padding-bottom:0; padding-left:3px;padding-right:3px;text-align: center; " colspan="2">
+
+<div style="border-bottom: 1px solid #ddd; padding-bottom: 5px; ">
+
+percentages
+
+</div>
+
+</th>
+
+</tr>
 
 <tr>
 
@@ -694,19 +751,37 @@ year
 
 <th style="text-align:right;">
 
-german\_all
-
-</th>
-
-<th style="text-align:right;">
-
 german\_female
 
 </th>
 
 <th style="text-align:right;">
 
-female\_share
+foreign\_female
+
+</th>
+
+<th style="text-align:right;">
+
+all\_german
+
+</th>
+
+<th style="text-align:right;">
+
+all\_female
+
+</th>
+
+<th style="text-align:right;">
+
+female\_share\_among\_germans
+
+</th>
+
+<th style="text-align:right;">
+
+german\_female\_share
 
 </th>
 
@@ -726,19 +801,37 @@ female\_share
 
 <td style="text-align:right;">
 
-960111
+514,168
 
 </td>
 
 <td style="text-align:right;">
 
-514168
+126,904
+
+</td>
+
+<td style="text-align:right;">
+
+960,111
+
+</td>
+
+<td style="text-align:right;">
+
+641,072
 
 </td>
 
 <td style="text-align:right;">
 
 0.54
+
+</td>
+
+<td style="text-align:right;">
+
+0.80
 
 </td>
 
@@ -754,19 +847,37 @@ female\_share
 
 <td style="text-align:right;">
 
-970183
+517,712
 
 </td>
 
 <td style="text-align:right;">
 
-517712
+130,238
+
+</td>
+
+<td style="text-align:right;">
+
+970,183
+
+</td>
+
+<td style="text-align:right;">
+
+647,950
 
 </td>
 
 <td style="text-align:right;">
 
 0.53
+
+</td>
+
+<td style="text-align:right;">
+
+0.80
 
 </td>
 
@@ -782,19 +893,37 @@ female\_share
 
 <td style="text-align:right;">
 
-974597
+518,533
 
 </td>
 
 <td style="text-align:right;">
 
-518533
+132,470
+
+</td>
+
+<td style="text-align:right;">
+
+974,597
+
+</td>
+
+<td style="text-align:right;">
+
+651,003
 
 </td>
 
 <td style="text-align:right;">
 
 0.53
+
+</td>
+
+<td style="text-align:right;">
+
+0.80
 
 </td>
 
@@ -810,19 +939,37 @@ female\_share
 
 <td style="text-align:right;">
 
-975670
+517,904
 
 </td>
 
 <td style="text-align:right;">
 
-517904
+135,331
+
+</td>
+
+<td style="text-align:right;">
+
+975,670
+
+</td>
+
+<td style="text-align:right;">
+
+653,236
 
 </td>
 
 <td style="text-align:right;">
 
 0.53
+
+</td>
+
+<td style="text-align:right;">
+
+0.79
 
 </td>
 
@@ -838,19 +985,37 @@ female\_share
 
 <td style="text-align:right;">
 
-977249
+517,884
 
 </td>
 
 <td style="text-align:right;">
 
-517884
+136,630
+
+</td>
+
+<td style="text-align:right;">
+
+977,249
+
+</td>
+
+<td style="text-align:right;">
+
+654,515
 
 </td>
 
 <td style="text-align:right;">
 
 0.53
+
+</td>
+
+<td style="text-align:right;">
+
+0.79
 
 </td>
 
@@ -866,19 +1031,37 @@ female\_share
 
 <td style="text-align:right;">
 
-984594
+520,386
 
 </td>
 
 <td style="text-align:right;">
 
-520386
+140,568
+
+</td>
+
+<td style="text-align:right;">
+
+984,594
+
+</td>
+
+<td style="text-align:right;">
+
+660,954
 
 </td>
 
 <td style="text-align:right;">
 
 0.53
+
+</td>
+
+<td style="text-align:right;">
+
+0.79
 
 </td>
 
@@ -894,19 +1077,37 @@ female\_share
 
 <td style="text-align:right;">
 
-1007509
+531,108
 
 </td>
 
 <td style="text-align:right;">
 
-531108
+144,146
+
+</td>
+
+<td style="text-align:right;">
+
+1,007,509
+
+</td>
+
+<td style="text-align:right;">
+
+675,254
 
 </td>
 
 <td style="text-align:right;">
 
 0.53
+
+</td>
+
+<td style="text-align:right;">
+
+0.79
 
 </td>
 
@@ -922,19 +1123,37 @@ female\_share
 
 <td style="text-align:right;">
 
-1031287
+541,959
 
 </td>
 
 <td style="text-align:right;">
 
-541959
+147,222
+
+</td>
+
+<td style="text-align:right;">
+
+1,031,287
+
+</td>
+
+<td style="text-align:right;">
+
+689,182
 
 </td>
 
 <td style="text-align:right;">
 
 0.53
+
+</td>
+
+<td style="text-align:right;">
+
+0.79
 
 </td>
 
@@ -950,19 +1169,37 @@ female\_share
 
 <td style="text-align:right;">
 
-1045105
+548,027
 
 </td>
 
 <td style="text-align:right;">
 
-548027
+150,211
+
+</td>
+
+<td style="text-align:right;">
+
+1,045,105
+
+</td>
+
+<td style="text-align:right;">
+
+698,238
 
 </td>
 
 <td style="text-align:right;">
 
 0.52
+
+</td>
+
+<td style="text-align:right;">
+
+0.78
 
 </td>
 
@@ -978,19 +1215,37 @@ female\_share
 
 <td style="text-align:right;">
 
-1052103
+550,959
 
 </td>
 
 <td style="text-align:right;">
 
-550959
+148,599
+
+</td>
+
+<td style="text-align:right;">
+
+1,052,103
+
+</td>
+
+<td style="text-align:right;">
+
+699,558
 
 </td>
 
 <td style="text-align:right;">
 
 0.52
+
+</td>
+
+<td style="text-align:right;">
+
+0.79
 
 </td>
 
@@ -1006,19 +1261,37 @@ female\_share
 
 <td style="text-align:right;">
 
-1059451
+553,954
 
 </td>
 
 <td style="text-align:right;">
 
-553954
+151,328
+
+</td>
+
+<td style="text-align:right;">
+
+1,059,451
+
+</td>
+
+<td style="text-align:right;">
+
+705,283
 
 </td>
 
 <td style="text-align:right;">
 
 0.52
+
+</td>
+
+<td style="text-align:right;">
+
+0.79
 
 </td>
 
@@ -1034,19 +1307,37 @@ female\_share
 
 <td style="text-align:right;">
 
-1070394
+558,116
 
 </td>
 
 <td style="text-align:right;">
 
-558116
+157,464
+
+</td>
+
+<td style="text-align:right;">
+
+1,070,394
+
+</td>
+
+<td style="text-align:right;">
+
+715,580
 
 </td>
 
 <td style="text-align:right;">
 
 0.52
+
+</td>
+
+<td style="text-align:right;">
+
+0.78
 
 </td>
 
@@ -1062,19 +1353,37 @@ female\_share
 
 <td style="text-align:right;">
 
-1081036
+562,388
 
 </td>
 
 <td style="text-align:right;">
 
-562388
+165,760
+
+</td>
+
+<td style="text-align:right;">
+
+1,081,036
+
+</td>
+
+<td style="text-align:right;">
+
+728,148
 
 </td>
 
 <td style="text-align:right;">
 
 0.52
+
+</td>
+
+<td style="text-align:right;">
+
+0.77
 
 </td>
 
@@ -1090,19 +1399,37 @@ female\_share
 
 <td style="text-align:right;">
 
-1088920
+565,732
 
 </td>
 
 <td style="text-align:right;">
 
-565732
+174,331
+
+</td>
+
+<td style="text-align:right;">
+
+1,088,920
+
+</td>
+
+<td style="text-align:right;">
+
+740,063
 
 </td>
 
 <td style="text-align:right;">
 
 0.52
+
+</td>
+
+<td style="text-align:right;">
+
+0.76
 
 </td>
 
@@ -1118,19 +1445,37 @@ female\_share
 
 <td style="text-align:right;">
 
-1094788
+567,894
 
 </td>
 
 <td style="text-align:right;">
 
-567894
+183,660
+
+</td>
+
+<td style="text-align:right;">
+
+1,094,788
+
+</td>
+
+<td style="text-align:right;">
+
+751,554
 
 </td>
 
 <td style="text-align:right;">
 
 0.52
+
+</td>
+
+<td style="text-align:right;">
+
+0.76
 
 </td>
 
@@ -1146,19 +1491,37 @@ female\_share
 
 <td style="text-align:right;">
 
-1099356
+569,554
 
 </td>
 
 <td style="text-align:right;">
 
-569554
+193,766
+
+</td>
+
+<td style="text-align:right;">
+
+1,099,356
+
+</td>
+
+<td style="text-align:right;">
+
+763,320
 
 </td>
 
 <td style="text-align:right;">
 
 0.52
+
+</td>
+
+<td style="text-align:right;">
+
+0.75
 
 </td>
 
@@ -1174,19 +1537,37 @@ female\_share
 
 <td style="text-align:right;">
 
-1103956
+571,423
 
 </td>
 
 <td style="text-align:right;">
 
-571423
+203,557
+
+</td>
+
+<td style="text-align:right;">
+
+1,103,956
+
+</td>
+
+<td style="text-align:right;">
+
+774,980
 
 </td>
 
 <td style="text-align:right;">
 
 0.52
+
+</td>
+
+<td style="text-align:right;">
+
+0.74
 
 </td>
 
@@ -1202,19 +1583,37 @@ female\_share
 
 <td style="text-align:right;">
 
-1106840
+572,479
 
 </td>
 
 <td style="text-align:right;">
 
-572479
+206,579
+
+</td>
+
+<td style="text-align:right;">
+
+1,106,840
+
+</td>
+
+<td style="text-align:right;">
+
+779,058
 
 </td>
 
 <td style="text-align:right;">
 
 0.52
+
+</td>
+
+<td style="text-align:right;">
+
+0.73
 
 </td>
 
@@ -1230,19 +1629,37 @@ female\_share
 
 <td style="text-align:right;">
 
-1105693
+571,335
 
 </td>
 
 <td style="text-align:right;">
 
-571335
+205,135
+
+</td>
+
+<td style="text-align:right;">
+
+1,105,693
+
+</td>
+
+<td style="text-align:right;">
+
+776,471
 
 </td>
 
 <td style="text-align:right;">
 
 0.52
+
+</td>
+
+<td style="text-align:right;">
+
+0.74
 
 </td>
 
@@ -1258,19 +1675,37 @@ female\_share
 
 <td style="text-align:right;">
 
-1110235
+573,240
 
 </td>
 
 <td style="text-align:right;">
 
-573240
+208,963
+
+</td>
+
+<td style="text-align:right;">
+
+1,110,235
+
+</td>
+
+<td style="text-align:right;">
+
+782,203
 
 </td>
 
 <td style="text-align:right;">
 
 0.52
+
+</td>
+
+<td style="text-align:right;">
+
+0.73
 
 </td>
 
@@ -1292,7 +1727,7 @@ plot(
     type="o")
 ```
 
-![](Munich_numbers_files/figure-gfm/female_share_foreigners-1.png)<!-- -->
+![](Munich_numbers_files/figure-gfm/female_share_foreigners-1.jpeg)<!-- -->
 
 ### Family status
 
@@ -1309,7 +1744,7 @@ dat$BEVÖLKERUNG %>%
   scale_y_continuous(labels = scales::comma) + ggtitle("monthly trend - population by family status")
 ```
 
-![](Munich_numbers_files/figure-gfm/charts_population-1.png)<!-- -->
+![](Munich_numbers_files/figure-gfm/charts_population-1.jpeg)<!-- -->
 
 ``` r
 #ggsave("monthly trend - population by family status.png", dpi=400, dev='png', height=4, width=5, units="in", scale = 2)
@@ -1330,7 +1765,7 @@ dat$BEVÖLKERUNG %>%
     geom_smooth() + scale_y_continuous(labels = scales::comma) + ggtitle("Population by age group")
 ```
 
-![](Munich_numbers_files/figure-gfm/charts_population_by_age-1.png)<!-- -->
+![](Munich_numbers_files/figure-gfm/charts_population_by_age-1.jpeg)<!-- -->
 
 ## Religion
 
@@ -1345,7 +1780,7 @@ dat$BEVÖLKERUNG %>%
     geom_smooth() + scale_y_continuous(labels = scales::comma) + ggtitle("Religion in Munich")
 ```
 
-![](Munich_numbers_files/figure-gfm/charts_population_religion-1.png)<!-- -->
+![](Munich_numbers_files/figure-gfm/charts_population_religion-1.jpeg)<!-- -->
 
 ## Unemployment (gender & nationality)
 
@@ -1365,7 +1800,7 @@ dat$ARBEITSMARKT %>%
   scale_y_continuous(labels = scales::comma) + ggtitle("Unemployed in Munich (#)")
 ```
 
-![](Munich_numbers_files/figure-gfm/charts_unemployed_absolute-1.png)<!-- -->
+![](Munich_numbers_files/figure-gfm/charts_unemployed_absolute-1.jpeg)<!-- -->
 
 ### as percentages
 
@@ -1383,7 +1818,7 @@ dat$ARBEITSMARKT %>%
   scale_y_continuous(labels = scales::comma) + ggtitle("Unemployment rate in Munich")
 ```
 
-![](Munich_numbers_files/figure-gfm/charts_unemployed_percent-1.png)<!-- -->
+![](Munich_numbers_files/figure-gfm/charts_unemployed_percent-1.jpeg)<!-- -->
 
 # Counting NAs (missing data)
 
@@ -1574,7 +2009,7 @@ plot(nasFinal$NAs_proc, main="Percent of missing values for all variables")
 abline(h=0.1, col="blue")
 ```
 
-![](Munich_numbers_files/figure-gfm/prepare_count_of_NAs-1.png)<!-- -->
+![](Munich_numbers_files/figure-gfm/prepare_count_of_NAs-1.jpeg)<!-- -->
 
 ``` r
 rm(nasCount)
@@ -1927,14 +2362,14 @@ plot(dsFinal$`BEVÖLKERUNG - Altersgruppen - Rentner/innen (65 J. und älter)`, 
      main="Old-age pensioner and social welfare recipients")
 ```
 
-![](Munich_numbers_files/figure-gfm/prepare_correlation_charts-1.png)<!-- -->
+![](Munich_numbers_files/figure-gfm/prepare_correlation_charts-1.jpeg)<!-- -->
 
 ``` r
 plot(dsFinal$`BEVÖLKERUNG - Familienstand - geschieden`, dsFinal$`KFZ-Bestand - Pkw-Kraftstoffarten - Diesel gesamt`,
      main="Divorces and Diesel cars")
 ```
 
-![](Munich_numbers_files/figure-gfm/prepare_correlation_charts-2.png)<!-- -->
+![](Munich_numbers_files/figure-gfm/prepare_correlation_charts-2.jpeg)<!-- -->
 
 ## linear models
 
@@ -1989,6 +2424,6 @@ summary(model.lm)
 plot(model.lm)
 ```
 
-![](Munich_numbers_files/figure-gfm/prepare_linear_models-1.png)<!-- -->![](Munich_numbers_files/figure-gfm/prepare_linear_models-2.png)<!-- -->![](Munich_numbers_files/figure-gfm/prepare_linear_models-3.png)<!-- -->![](Munich_numbers_files/figure-gfm/prepare_linear_models-4.png)<!-- -->
+![](Munich_numbers_files/figure-gfm/prepare_linear_models-1.jpeg)<!-- -->![](Munich_numbers_files/figure-gfm/prepare_linear_models-2.jpeg)<!-- -->![](Munich_numbers_files/figure-gfm/prepare_linear_models-3.jpeg)<!-- -->![](Munich_numbers_files/figure-gfm/prepare_linear_models-4.jpeg)<!-- -->
 
 :)
