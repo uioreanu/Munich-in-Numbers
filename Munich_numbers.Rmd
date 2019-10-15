@@ -4,14 +4,14 @@ author: "CU"
 date: "10/6/2019"
 always_allow_html: yes
 output: 
-  html_document:
-    code_folding: hide
-    toc: true
-    toc_depth: 2
   github_document:
-    fig_width: 5
+    fig_width: 8
     fig_height: 5
     dev: jpeg
+    toc: true
+    toc_depth: 2
+  html_document:
+    code_folding: hide
     toc: true
     toc_depth: 2
 ---
@@ -133,6 +133,20 @@ dat$KINOS %>%
     facet_wrap(~AUSPRAEGUNG) +
     theme_classic()+ 
     geom_smooth() + scale_y_continuous(labels = scales::comma) + ggtitle("Cinema Visitors")
+```
+
+## OlympiaPark & Zoo
+
+```{r charts_olympiapark, message=FALSE}
+dat$FREIZEIT %>%
+  mutate(Month = as.Date(paste0(MONAT,'01'), format = '%Y%m%d')) %>%
+  mutate(Year = substring(Month, 3, 4))  %>%
+  group_by(Year, AUSPRAEGUNG) %>%
+  summarize(Visitors = max(WERT, na.rm = T)) %>%
+  ggplot(., aes(x=Year, y = Visitors, color=AUSPRAEGUNG, group=1)) + 
+    geom_point() + 
+    theme_classic()+ 
+    scale_y_continuous(labels = scales::comma) + ggtitle("Leisure")
 ```
 
 ## weather trends 
@@ -273,10 +287,10 @@ dsFinal %>%
   select(year, german_female, foreign_female, all_german, all_female) %>%
   group_by(year) %>%
   summarize(
-            german_female = round(mean(german_female, na.rm = TRUE),0),
-            foreign_female = round(mean(foreign_female, na.rm = TRUE),0),
-            all_german=round(mean(all_german, na.rm = TRUE),0),
-            all_female=round(mean(all_female, na.rm = TRUE),0)
+            german_female = round(mean(german_female, na.rm = TRUE)/1e3,0),
+            foreign_female = round(mean(foreign_female, na.rm = TRUE)/1e3,0),
+            all_german=round(mean(all_german, na.rm = TRUE)/1e3,0),
+            all_female=round(mean(all_female, na.rm = TRUE)/1e3,0)
             ) %>%
   mutate(
     female_share_among_germans = round(german_female/all_german, 2),
