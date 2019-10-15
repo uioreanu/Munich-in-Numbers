@@ -4,14 +4,14 @@ author: "CU"
 date: "10/6/2019"
 always_allow_html: yes
 output: 
+  html_document:
+    code_folding: hide
+    toc: true
+    toc_depth: 2
   github_document:
     fig_width: 5
     fig_height: 5
     dev: jpeg
-    toc: true
-    toc_depth: 2
-  html_document:
-    code_folding: hide
     toc: true
     toc_depth: 2
 ---
@@ -283,7 +283,8 @@ dsFinal %>%
     german_female_share = round(german_female/all_female, 2)
     ) %>%
   kable(format.args = list(decimal.mark = ".", big.mark = ",")) %>%
-  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive")) %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"),
+                fixed_thead = T) %>%
   add_header_above(c(" ", "in thousands" = 4, "percentages" = 2))
 
 
