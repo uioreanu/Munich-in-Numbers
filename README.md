@@ -3,40 +3,35 @@ Munich in numbers
 CU
 10/6/2019
 
-  - [Brief exploratory analysis](#brief-exploratory-analysis)
-      - [Data](#data)
-  - [General Trends (monthly)](#general-trends-monthly)
-      - [Cinema visitors](#cinema-visitors)
-      - [weather trends](#weather-trends)
-      - [Tourists](#tourists)
-      - [Population](#population)
-      - [Religion](#religion)
-      - [Unemployment (gender &
-        nationality)](#unemployment-gender-nationality)
-  - [Counting NAs (missing data)](#counting-nas-missing-data)
-  - [Explore correlations](#explore-correlations)
-      - [simple use of cor()](#simple-use-of-cor)
-      - [the correlate package](#the-correlate-package)
-  - [Next steps](#next-steps)
-      - [Highly Correlated variables](#highly-correlated-variables)
-      - [linear models](#linear-models)
+-   [Brief exploratory analysis](#brief-exploratory-analysis)
+    -   [Data](#data)
+-   [General Trends (monthly)](#general-trends-monthly)
+    -   [Cinema visitors](#cinema-visitors)
+    -   [OlympiaPark & Zoo](#olympiapark-zoo)
+    -   [weather trends](#weather-trends)
+    -   [Tourists](#tourists)
+    -   [Population](#population)
+    -   [Religion](#religion)
+    -   [Unemployment (gender & nationality)](#unemployment-gender-nationality)
+-   [Counting NAs (missing data)](#counting-nas-missing-data)
+-   [Explore correlations](#explore-correlations)
+    -   [simple use of cor()](#simple-use-of-cor)
+    -   [the correlate package](#the-correlate-package)
+-   [Next steps](#next-steps)
+    -   [Highly Correlated variables](#highly-correlated-variables)
+    -   [linear models](#linear-models)
 
-# Brief exploratory analysis
+Brief exploratory analysis
+==========================
 
 This is a brief EDA of Munich stats.
 
-## Data
+Data
+----
 
 ### source
 
-Thanks to **Statistische Amt München** for making the data available on
-a monthly basis. They make way more data available, these are solely
-main KPIs. Source of data:
-<http://www.mstatistik-muenchen.de/monatszahlenmonitoring/export/export.php>.
-Official Data exploration portal:
-<http://www.mstatistik-muenchen.de/monatszahlenmonitoring/atlas.html?indicator=i158&date=Jan&select=20,19&select2=JAHR&indicator2=i0>.
-Data here is extracted from Excel, processed into data.frames and
-correlation charts
+Thanks to **Statistische Amt München** for making the data available on a monthly basis. They make way more data available, these are solely main KPIs. Source of data: <http://www.mstatistik-muenchen.de/monatszahlenmonitoring/export/export.php>. Official Data exploration portal: <http://www.mstatistik-muenchen.de/monatszahlenmonitoring/atlas.html?indicator=i158&date=Jan&select=20,19&select2=JAHR&indicator2=i0>. Data here is extracted from Excel, processed into data.frames and correlation charts
 
 ### raw
 
@@ -49,414 +44,209 @@ as.data.frame(lapply(dat, dim)) %>%
 ```
 
 <table>
-
 <thead>
-
 <tr>
-
 <th style="text-align:left;">
-
 rowname
-
 </th>
-
 <th style="text-align:right;">
-
 INHALTSÜBERSICHT
-
 </th>
-
 <th style="text-align:right;">
-
 ARBEITSMARKT
-
 </th>
-
 <th style="text-align:right;">
-
 BAUEN
-
 </th>
-
 <th style="text-align:right;">
-
 BEVÖLKERUNG
-
 </th>
-
 <th style="text-align:right;">
-
 EINBÜRGERUNGEN
-
 </th>
-
 <th style="text-align:right;">
-
 FEUERWEHR.MÜNCHEN
-
 </th>
-
 <th style="text-align:right;">
-
 FLUGVERKEHR
-
 </th>
-
 <th style="text-align:right;">
-
 FREIZEIT
-
 </th>
-
 <th style="text-align:right;">
-
 KFZ.Bestand
-
 </th>
-
 <th style="text-align:right;">
-
 KFZ.Neuzulassungen
-
 </th>
-
 <th style="text-align:right;">
-
 KINOS
-
 </th>
-
 <th style="text-align:right;">
-
 MUSEEN
-
 </th>
-
 <th style="text-align:right;">
-
 ORCHESTER
-
 </th>
-
 <th style="text-align:right;">
-
 SOZIALE.LEISTUNGEN
-
 </th>
-
 <th style="text-align:right;">
-
 THEATER
-
 </th>
-
 <th style="text-align:right;">
-
 TOURISMUS
-
 </th>
-
 <th style="text-align:right;">
-
 VERKEHRSUNFÄLLE
-
 </th>
-
 <th style="text-align:right;">
-
 WIRTSCHAFT
-
 </th>
-
 <th style="text-align:right;">
-
 WITTERUNG
-
 </th>
-
 <th style="text-align:right;">
-
 IMPRESSUM
-
 </th>
-
 </tr>
-
 </thead>
-
 <tbody>
-
 <tr>
-
 <td style="text-align:left;">
-
 1
-
 </td>
-
 <td style="text-align:right;">
-
 288
-
 </td>
-
 <td style="text-align:right;">
-
 2119
-
 </td>
-
 <td style="text-align:right;">
-
 720
-
 </td>
-
 <td style="text-align:right;">
-
 19109
-
 </td>
-
 <td style="text-align:right;">
-
 660
-
 </td>
-
 <td style="text-align:right;">
-
 1914
-
 </td>
-
 <td style="text-align:right;">
-
 1880
-
 </td>
-
 <td style="text-align:right;">
-
 1639
-
 </td>
-
 <td style="text-align:right;">
-
 4984
-
 </td>
-
 <td style="text-align:right;">
-
 2592
-
 </td>
-
 <td style="text-align:right;">
-
 228
-
 </td>
-
 <td style="text-align:right;">
-
 2068
-
 </td>
-
 <td style="text-align:right;">
-
 1416
-
 </td>
-
 <td style="text-align:right;">
-
 2055
-
 </td>
-
 <td style="text-align:right;">
-
 4056
-
 </td>
-
 <td style="text-align:right;">
-
 954
-
 </td>
-
 <td style="text-align:right;">
-
 1596
-
 </td>
-
 <td style="text-align:right;">
-
 4462
-
 </td>
-
 <td style="text-align:right;">
-
 1638
-
 </td>
-
 <td style="text-align:right;">
-
 13
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:left;">
-
 2
-
 </td>
-
 <td style="text-align:right;">
-
 7
-
 </td>
-
 <td style="text-align:right;">
-
 9
-
 </td>
-
 <td style="text-align:right;">
-
 9
-
 </td>
-
 <td style="text-align:right;">
-
 9
-
 </td>
-
 <td style="text-align:right;">
-
 9
-
 </td>
-
 <td style="text-align:right;">
-
 9
-
 </td>
-
 <td style="text-align:right;">
-
 9
-
 </td>
-
 <td style="text-align:right;">
-
 9
-
 </td>
-
 <td style="text-align:right;">
-
 9
-
 </td>
-
 <td style="text-align:right;">
-
 9
-
 </td>
-
 <td style="text-align:right;">
-
 9
-
 </td>
-
 <td style="text-align:right;">
-
 9
-
 </td>
-
 <td style="text-align:right;">
-
 9
-
 </td>
-
 <td style="text-align:right;">
-
 9
-
 </td>
-
 <td style="text-align:right;">
-
 9
-
 </td>
-
 <td style="text-align:right;">
-
 9
-
 </td>
-
 <td style="text-align:right;">
-
 9
-
 </td>
-
 <td style="text-align:right;">
-
 9
-
 </td>
-
 <td style="text-align:right;">
-
 9
-
 </td>
-
 <td style="text-align:right;">
-
 1
-
 </td>
-
 </tr>
-
 </tbody>
-
 </table>
-
 ### aggregated
 
-We’ll now compress the **original disparated data** in one compact
-data.frame For that, we create dynamic column names and aggregate the
-monthly values The final result will be a large matrix (\~300 columns)
-where each column represents a variable and the rows are the monthly
-values (20 yrs x 12 months)
+We'll now compress the **original disparated data** in one compact data.frame For that, we create dynamic column names and aggregate the monthly values The final result will be a large matrix (~300 columns) where each column represents a variable and the rows are the monthly values (20 yrs x 12 months)
 
 ``` r
 ##########################
@@ -508,9 +298,11 @@ dim(dsFinal)
 ##########################
 ```
 
-# General Trends (monthly)
+General Trends (monthly)
+========================
 
-## Cinema visitors
+Cinema visitors
+---------------
 
 ``` r
 ##########################
@@ -524,9 +316,33 @@ dat$KINOS %>%
     geom_smooth() + scale_y_continuous(labels = scales::comma) + ggtitle("Cinema Visitors")
 ```
 
-![](Munich_numbers_files/figure-gfm/charts_kinos-1.jpeg)<!-- -->
+![](Munich_numbers_files/figure-markdown_github/charts_kinos-1.jpeg)
 
-## weather trends
+OlympiaPark & Zoo
+-----------------
+
+``` r
+dat$FREIZEIT %>%
+  mutate(Month = as.Date(paste0(MONAT,'01'), format = '%Y%m%d')) %>%
+  mutate(Year = substring(Month, 3, 4))  %>%
+  group_by(Year, AUSPRAEGUNG) %>%
+  summarize(Visitors = max(WERT, na.rm = T)) %>%
+  ggplot(., aes(x=Year, y = Visitors, color=AUSPRAEGUNG, group=1)) + 
+    geom_point() + 
+    theme_classic()+ 
+    scale_y_continuous(labels = scales::comma) + ggtitle("Leisure")
+```
+
+    ## Warning in max(WERT, na.rm = T): kein nicht-fehlendes Argument für max;
+    ## gebe -Inf zurück
+
+    ## Warning in max(WERT, na.rm = T): kein nicht-fehlendes Argument für max;
+    ## gebe -Inf zurück
+
+![](Munich_numbers_files/figure-markdown_github/charts_olympiapark-1.jpeg)
+
+weather trends
+--------------
 
 ### Sun & temperature
 
@@ -541,7 +357,7 @@ dat$WITTERUNG %>%
   geom_smooth() + scale_y_continuous(labels = scales::comma) + ggtitle("monthly weather trends")
 ```
 
-![](Munich_numbers_files/figure-gfm/charts_weather-1.jpeg)<!-- -->
+![](Munich_numbers_files/figure-markdown_github/charts_weather-1.jpeg)
 
 ### Rain
 
@@ -556,9 +372,10 @@ dat$WITTERUNG %>%
   geom_smooth() + scale_y_continuous(labels = scales::comma) + ggtitle("monthly weather trends")
 ```
 
-![](Munich_numbers_files/figure-gfm/charts_weather_rain-1.jpeg)<!-- -->
+![](Munich_numbers_files/figure-markdown_github/charts_weather_rain-1.jpeg)
 
-## Tourists
+Tourists
+--------
 
 ``` r
 dat$TOURISMUS %>%
@@ -571,9 +388,10 @@ dat$TOURISMUS %>%
   geom_smooth() + scale_y_continuous(position = "right", labels = scales::comma) + ggtitle("monthly trend - Turist guests")
 ```
 
-![](Munich_numbers_files/figure-gfm/charts_tourism-1.jpeg)<!-- -->
+![](Munich_numbers_files/figure-markdown_github/charts_tourism-1.jpeg)
 
-## Population
+Population
+----------
 
 ### German population 2010-today
 
@@ -582,17 +400,29 @@ dsFinal %>%
   rownames_to_column() %>%
   select(rowname, `german population` =  `BEVÖLKERUNG - Geschlecht und Staatsangehörigkeit - Deutsche insgesamt`) %>%
   mutate(Month = as.Date(paste0(rowname,'01'), format = '%Y%m%d')) %>%
-  filter(Month>='2010-01-01') %>%
-  ggplot(aes(x = Month))  + 
-    geom_line(aes(y = `german population`)) + 
+  filter(Month>='2010-01-01') -> ds
+ds$id <- 1:nrow(ds)
+fit <- lm(`german population`~id, ds)
+
+ds %>%
+  ggplot(aes(x = Month, y = `german population`))  + 
+    geom_line() +
+     geom_smooth(method='lm', se = FALSE) + 
     theme_minimal() + 
     scale_x_date(date_breaks = "1 year", date_labels = "%Y") + 
-    scale_y_continuous(position = "right", labels = scales::comma) 
+    scale_y_continuous(position = "right", labels = scales::comma) +
+  
+  geom_text(x=-Inf,y=+Inf,hjust="inward", aes(label = paste("\n","\n","\n","\n","\n","Adj R2 = ", signif(summary(fit)$adj.r.squared, 3), "\n",
+                                       "Intercept =",signif(fit$coef[[1]],3 ), "\n",
+                                       "Annual growth rate (lin) =", 12*signif(fit$coef[[2]], 3), "\n",
+                                       "P =", signif(summary(fit)$coef[2,4], 2) )))
 ```
 
-    ## Warning: Removed 1 rows containing missing values (geom_path).
+![](Munich_numbers_files/figure-markdown_github/charts_population_germans_only-1.jpeg)
 
-![](Munich_numbers_files/figure-gfm/charts_population_germans_only-1.jpeg)<!-- -->
+``` r
+rm(ds)
+```
 
 ### Foreigners 2010-today
 
@@ -601,17 +431,31 @@ dsFinal %>%
   rownames_to_column() %>%
   select(rowname, `foreigners` = `BEVÖLKERUNG - Geschlecht und Staatsangehörigkeit - Ausländer/innen insgesamt`) %>%
   mutate(Month = as.Date(paste0(rowname,'01'), format = '%Y%m%d')) %>%
-  filter(Month>='2010-01-01') %>%
-  ggplot(aes(x = Month))  + 
-    geom_line(aes(y = foreigners), linetype="twodash") + 
+  filter(Month>='2010-01-01') -> ds
+ds$id <- 1:nrow(ds)
+fit <- lm(`foreigners`~id, ds)
+ds %>%
+  ggplot(aes(x = Month, y = foreigners))  + 
+    geom_line(linetype="twodash") + 
+     geom_smooth(method='lm', se = FALSE) + 
     theme_minimal() + 
     scale_x_date(date_breaks = "1 year", date_labels = "%Y") + 
-    scale_y_continuous(position = "right", labels = scales::comma) 
+    scale_y_continuous(position = "right", labels = scales::comma) +
+      geom_text(x=-Inf,y=+Inf,hjust="inward", aes(label = paste("\n","\n","\n","\n","\n","Adj R2 = ", signif(summary(fit)$adj.r.squared, 3), "\n",
+                                       "Intercept =",signif(fit$coef[[1]],3 ), "\n",
+                                       "Annual growth rate (lin) =", 12*signif(fit$coef[[2]], 3), "\n",
+                                       "P =", signif(summary(fit)$coef[2,4], 2) )))
 ```
+
+    ## Warning: Removed 2 rows containing non-finite values (stat_smooth).
 
     ## Warning: Removed 1 rows containing missing values (geom_path).
 
-![](Munich_numbers_files/figure-gfm/charts_population_foreigners_only-1.jpeg)<!-- -->
+![](Munich_numbers_files/figure-markdown_github/charts_population_foreigners_only-1.jpeg)
+
+``` r
+rm(ds)
+```
 
 ### Inhabitants (all & gender)
 
@@ -630,16 +474,19 @@ dat$BEVÖLKERUNG %>%
 ```
 
     ## Warning: funs() is soft deprecated as of dplyr 0.8.0
-    ## please use list() instead
+    ## Please use a list of either functions or lambdas: 
     ## 
-    ##   # Before:
-    ##   funs(name = f(.))
+    ##   # Simple named list: 
+    ##   list(mean = mean, median = median)
     ## 
-    ##   # After: 
-    ##   list(name = ~ f(.))
+    ##   # Auto named with `tibble::lst()`: 
+    ##   tibble::lst(mean, median)
+    ## 
+    ##   # Using lambdas
+    ##   list(~ mean(., trim = .2), ~ median(., na.rm = TRUE))
     ## This warning is displayed once per session.
 
-![](Munich_numbers_files/figure-gfm/charts_population_all-1.jpeg)<!-- -->
+![](Munich_numbers_files/figure-markdown_github/charts_population_all-1.jpeg)
 
 ### German inhabitants (all & gender)
 
@@ -657,7 +504,7 @@ dat$BEVÖLKERUNG %>%
   scale_y_continuous(labels = scales::comma) + ggtitle("Germans in Munich (male, female, all)")
 ```
 
-![](Munich_numbers_files/figure-gfm/charts_population_german-1.jpeg)<!-- -->
+![](Munich_numbers_files/figure-markdown_github/charts_population_german-1.jpeg)
 
 ### Foreign inhabitants (all & gender)
 
@@ -675,7 +522,7 @@ dat$BEVÖLKERUNG %>%
   scale_y_continuous(labels = scales::comma) + ggtitle("Foreigners in Munich (male, female, all)")
 ```
 
-![](Munich_numbers_files/figure-gfm/charts_population_foreign-1.jpeg)<!-- -->
+![](Munich_numbers_files/figure-markdown_github/charts_population_foreign-1.jpeg)
 
 ### Female share
 
@@ -694,1027 +541,522 @@ dsFinal %>%
   select(year, german_female, foreign_female, all_german, all_female) %>%
   group_by(year) %>%
   summarize(
-            german_female = round(mean(german_female, na.rm = TRUE),0),
-            foreign_female = round(mean(foreign_female, na.rm = TRUE),0),
-            all_german=round(mean(all_german, na.rm = TRUE),0),
-            all_female=round(mean(all_female, na.rm = TRUE),0)
+            german_female = round(mean(german_female, na.rm = TRUE)/1e3,0),
+            foreign_female = round(mean(foreign_female, na.rm = TRUE)/1e3,0),
+            all_german=round(mean(all_german, na.rm = TRUE)/1e3,0),
+            all_female=round(mean(all_female, na.rm = TRUE)/1e3,0)
             ) %>%
   mutate(
     female_share_among_germans = round(german_female/all_german, 2),
     german_female_share = round(german_female/all_female, 2)
     ) %>%
   kable(format.args = list(decimal.mark = ".", big.mark = ",")) %>%
-  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive")) %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"),
+                fixed_thead = T) %>%
   add_header_above(c(" ", "in thousands" = 4, "percentages" = 2))
 ```
 
 <table class="table table-striped table-hover table-condensed table-responsive" style="margin-left: auto; margin-right: auto;">
-
 <thead>
-
 <tr>
-
 <th style="border-bottom:hidden" colspan="1">
-
 </th>
-
 <th style="border-bottom:hidden; padding-bottom:0; padding-left:3px;padding-right:3px;text-align: center; " colspan="4">
-
-<div style="border-bottom: 1px solid #ddd; padding-bottom: 5px; ">
-
-in
-thousands
-
-</div>
+in thousands
 
 </th>
-
 <th style="border-bottom:hidden; padding-bottom:0; padding-left:3px;padding-right:3px;text-align: center; " colspan="2">
-
-<div style="border-bottom: 1px solid #ddd; padding-bottom: 5px; ">
-
 percentages
 
-</div>
-
 </th>
-
 </tr>
-
 <tr>
-
-<th style="text-align:left;">
-
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
 year
-
 </th>
-
-<th style="text-align:right;">
-
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
 german\_female
-
 </th>
-
-<th style="text-align:right;">
-
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
 foreign\_female
-
 </th>
-
-<th style="text-align:right;">
-
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
 all\_german
-
 </th>
-
-<th style="text-align:right;">
-
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
 all\_female
-
 </th>
-
-<th style="text-align:right;">
-
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
 female\_share\_among\_germans
-
 </th>
-
-<th style="text-align:right;">
-
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
 german\_female\_share
-
 </th>
-
 </tr>
-
 </thead>
-
 <tbody>
-
 <tr>
-
 <td style="text-align:left;">
-
 2000
-
 </td>
-
 <td style="text-align:right;">
-
-514,168
-
+514
 </td>
-
 <td style="text-align:right;">
-
-126,904
-
+127
 </td>
-
 <td style="text-align:right;">
-
-960,111
-
+960
 </td>
-
 <td style="text-align:right;">
-
-641,072
-
+641
 </td>
-
 <td style="text-align:right;">
-
 0.54
-
 </td>
-
 <td style="text-align:right;">
-
 0.80
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:left;">
-
 2001
-
 </td>
-
 <td style="text-align:right;">
-
-517,712
-
+518
 </td>
-
 <td style="text-align:right;">
-
-130,238
-
+130
 </td>
-
 <td style="text-align:right;">
-
-970,183
-
+970
 </td>
-
 <td style="text-align:right;">
-
-647,950
-
+648
 </td>
-
 <td style="text-align:right;">
-
 0.53
-
 </td>
-
 <td style="text-align:right;">
-
 0.80
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:left;">
-
 2002
-
 </td>
-
 <td style="text-align:right;">
-
-518,533
-
+519
 </td>
-
 <td style="text-align:right;">
-
-132,470
-
+132
 </td>
-
 <td style="text-align:right;">
-
-974,597
-
+975
 </td>
-
 <td style="text-align:right;">
-
-651,003
-
+651
 </td>
-
 <td style="text-align:right;">
-
 0.53
-
 </td>
-
 <td style="text-align:right;">
-
 0.80
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:left;">
-
 2003
-
 </td>
-
 <td style="text-align:right;">
-
-517,904
-
+518
 </td>
-
 <td style="text-align:right;">
-
-135,331
-
+135
 </td>
-
 <td style="text-align:right;">
-
-975,670
-
+976
 </td>
-
 <td style="text-align:right;">
-
-653,236
-
+653
 </td>
-
 <td style="text-align:right;">
-
 0.53
-
 </td>
-
 <td style="text-align:right;">
-
 0.79
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:left;">
-
 2004
-
 </td>
-
 <td style="text-align:right;">
-
-517,884
-
+518
 </td>
-
 <td style="text-align:right;">
-
-136,630
-
+137
 </td>
-
 <td style="text-align:right;">
-
-977,249
-
+977
 </td>
-
 <td style="text-align:right;">
-
-654,515
-
+655
 </td>
-
 <td style="text-align:right;">
-
 0.53
-
 </td>
-
 <td style="text-align:right;">
-
 0.79
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:left;">
-
 2005
-
 </td>
-
 <td style="text-align:right;">
-
-520,386
-
+520
 </td>
-
 <td style="text-align:right;">
-
-140,568
-
+141
 </td>
-
 <td style="text-align:right;">
-
-984,594
-
+985
 </td>
-
 <td style="text-align:right;">
-
-660,954
-
+661
 </td>
-
 <td style="text-align:right;">
-
 0.53
-
 </td>
-
 <td style="text-align:right;">
-
 0.79
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:left;">
-
 2006
-
 </td>
-
 <td style="text-align:right;">
-
-531,108
-
+531
 </td>
-
 <td style="text-align:right;">
-
-144,146
-
+144
 </td>
-
 <td style="text-align:right;">
-
-1,007,509
-
+1,008
 </td>
-
 <td style="text-align:right;">
-
-675,254
-
+675
 </td>
-
 <td style="text-align:right;">
-
 0.53
-
 </td>
-
 <td style="text-align:right;">
-
 0.79
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:left;">
-
 2007
-
 </td>
-
 <td style="text-align:right;">
-
-541,959
-
+542
 </td>
-
 <td style="text-align:right;">
-
-147,222
-
+147
 </td>
-
 <td style="text-align:right;">
-
-1,031,287
-
+1,031
 </td>
-
 <td style="text-align:right;">
-
-689,182
-
+689
 </td>
-
 <td style="text-align:right;">
-
 0.53
-
 </td>
-
 <td style="text-align:right;">
-
 0.79
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:left;">
-
 2008
-
 </td>
-
 <td style="text-align:right;">
-
-548,027
-
+548
 </td>
-
 <td style="text-align:right;">
-
-150,211
-
+150
 </td>
-
 <td style="text-align:right;">
-
-1,045,105
-
+1,045
 </td>
-
 <td style="text-align:right;">
-
-698,238
-
+698
 </td>
-
 <td style="text-align:right;">
-
 0.52
-
 </td>
-
 <td style="text-align:right;">
-
-0.78
-
+0.79
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:left;">
-
 2009
-
 </td>
-
 <td style="text-align:right;">
-
-550,959
-
+551
 </td>
-
 <td style="text-align:right;">
-
-148,599
-
+149
 </td>
-
 <td style="text-align:right;">
-
-1,052,103
-
+1,052
 </td>
-
 <td style="text-align:right;">
-
-699,558
-
+700
 </td>
-
 <td style="text-align:right;">
-
 0.52
-
 </td>
-
 <td style="text-align:right;">
-
 0.79
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:left;">
-
 2010
-
 </td>
-
 <td style="text-align:right;">
-
-553,954
-
+554
 </td>
-
 <td style="text-align:right;">
-
-151,328
-
+151
 </td>
-
 <td style="text-align:right;">
-
-1,059,451
-
+1,059
 </td>
-
 <td style="text-align:right;">
-
-705,283
-
+705
 </td>
-
 <td style="text-align:right;">
-
 0.52
-
 </td>
-
 <td style="text-align:right;">
-
 0.79
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:left;">
-
 2011
-
 </td>
-
 <td style="text-align:right;">
-
-558,116
-
+558
 </td>
-
 <td style="text-align:right;">
-
-157,464
-
+157
 </td>
-
 <td style="text-align:right;">
-
-1,070,394
-
+1,070
 </td>
-
 <td style="text-align:right;">
-
-715,580
-
+716
 </td>
-
 <td style="text-align:right;">
-
 0.52
-
 </td>
-
 <td style="text-align:right;">
-
 0.78
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:left;">
-
 2012
-
 </td>
-
 <td style="text-align:right;">
-
-562,388
-
+562
 </td>
-
 <td style="text-align:right;">
-
-165,760
-
+166
 </td>
-
 <td style="text-align:right;">
-
-1,081,036
-
+1,081
 </td>
-
 <td style="text-align:right;">
-
-728,148
-
+728
 </td>
-
 <td style="text-align:right;">
-
 0.52
-
 </td>
-
 <td style="text-align:right;">
-
 0.77
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:left;">
-
 2013
-
 </td>
-
 <td style="text-align:right;">
-
-565,732
-
+566
 </td>
-
 <td style="text-align:right;">
-
-174,331
-
+174
 </td>
-
 <td style="text-align:right;">
-
-1,088,920
-
+1,089
 </td>
-
 <td style="text-align:right;">
-
-740,063
-
+740
 </td>
-
 <td style="text-align:right;">
-
 0.52
-
 </td>
-
 <td style="text-align:right;">
-
 0.76
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:left;">
-
 2014
-
 </td>
-
 <td style="text-align:right;">
-
-567,894
-
+568
 </td>
-
 <td style="text-align:right;">
-
-183,660
-
+184
 </td>
-
 <td style="text-align:right;">
-
-1,094,788
-
+1,095
 </td>
-
 <td style="text-align:right;">
-
-751,554
-
+752
 </td>
-
 <td style="text-align:right;">
-
 0.52
-
 </td>
-
 <td style="text-align:right;">
-
 0.76
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:left;">
-
 2015
-
 </td>
-
 <td style="text-align:right;">
-
-569,554
-
+570
 </td>
-
 <td style="text-align:right;">
-
-193,766
-
+194
 </td>
-
 <td style="text-align:right;">
-
-1,099,356
-
+1,099
 </td>
-
 <td style="text-align:right;">
-
-763,320
-
+763
 </td>
-
 <td style="text-align:right;">
-
 0.52
-
 </td>
-
 <td style="text-align:right;">
-
 0.75
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:left;">
-
 2016
-
 </td>
-
 <td style="text-align:right;">
-
-571,423
-
+571
 </td>
-
 <td style="text-align:right;">
-
-203,557
-
+204
 </td>
-
 <td style="text-align:right;">
-
-1,103,956
-
+1,104
 </td>
-
 <td style="text-align:right;">
-
-774,980
-
+775
 </td>
-
 <td style="text-align:right;">
-
 0.52
-
 </td>
-
 <td style="text-align:right;">
-
 0.74
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:left;">
-
 2017
-
 </td>
-
 <td style="text-align:right;">
-
-572,479
-
+572
 </td>
-
 <td style="text-align:right;">
-
-206,579
-
+207
 </td>
-
 <td style="text-align:right;">
-
-1,106,840
-
+1,107
 </td>
-
 <td style="text-align:right;">
-
-779,058
-
+779
 </td>
-
 <td style="text-align:right;">
-
 0.52
-
 </td>
-
 <td style="text-align:right;">
-
 0.73
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:left;">
-
 2018
-
 </td>
-
 <td style="text-align:right;">
-
-571,335
-
+571
 </td>
-
 <td style="text-align:right;">
-
-205,135
-
+205
 </td>
-
 <td style="text-align:right;">
-
-1,105,693
-
+1,106
 </td>
-
 <td style="text-align:right;">
-
-776,471
-
+776
 </td>
-
 <td style="text-align:right;">
-
 0.52
-
 </td>
-
 <td style="text-align:right;">
-
 0.74
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:left;">
-
 2019
-
 </td>
-
 <td style="text-align:right;">
-
-573,240
-
+573
 </td>
-
 <td style="text-align:right;">
-
-208,963
-
+209
 </td>
-
 <td style="text-align:right;">
-
-1,110,235
-
+1,110
 </td>
-
 <td style="text-align:right;">
-
-782,203
-
+782
 </td>
-
 <td style="text-align:right;">
-
 0.52
-
 </td>
-
 <td style="text-align:right;">
-
 0.73
-
 </td>
-
 </tr>
-
 </tbody>
-
 </table>
-
 #### among foreigners
 
 ``` r
@@ -1727,7 +1069,7 @@ plot(
     type="o")
 ```
 
-![](Munich_numbers_files/figure-gfm/female_share_foreigners-1.jpeg)<!-- -->
+![](Munich_numbers_files/figure-markdown_github/female_share_foreigners-1.jpeg)
 
 ### Family status
 
@@ -1744,7 +1086,7 @@ dat$BEVÖLKERUNG %>%
   scale_y_continuous(labels = scales::comma) + ggtitle("monthly trend - population by family status")
 ```
 
-![](Munich_numbers_files/figure-gfm/charts_population-1.jpeg)<!-- -->
+![](Munich_numbers_files/figure-markdown_github/charts_population-1.jpeg)
 
 ``` r
 #ggsave("monthly trend - population by family status.png", dpi=400, dev='png', height=4, width=5, units="in", scale = 2)
@@ -1765,9 +1107,10 @@ dat$BEVÖLKERUNG %>%
     geom_smooth() + scale_y_continuous(labels = scales::comma) + ggtitle("Population by age group")
 ```
 
-![](Munich_numbers_files/figure-gfm/charts_population_by_age-1.jpeg)<!-- -->
+![](Munich_numbers_files/figure-markdown_github/charts_population_by_age-1.jpeg)
 
-## Religion
+Religion
+--------
 
 ``` r
 dat$BEVÖLKERUNG %>%
@@ -1780,9 +1123,10 @@ dat$BEVÖLKERUNG %>%
     geom_smooth() + scale_y_continuous(labels = scales::comma) + ggtitle("Religion in Munich")
 ```
 
-![](Munich_numbers_files/figure-gfm/charts_population_religion-1.jpeg)<!-- -->
+![](Munich_numbers_files/figure-markdown_github/charts_population_religion-1.jpeg)
 
-## Unemployment (gender & nationality)
+Unemployment (gender & nationality)
+-----------------------------------
 
 ### absolute numbers
 
@@ -1800,7 +1144,7 @@ dat$ARBEITSMARKT %>%
   scale_y_continuous(labels = scales::comma) + ggtitle("Unemployed in Munich (#)")
 ```
 
-![](Munich_numbers_files/figure-gfm/charts_unemployed_absolute-1.jpeg)<!-- -->
+![](Munich_numbers_files/figure-markdown_github/charts_unemployed_absolute-1.jpeg)
 
 ### as percentages
 
@@ -1818,9 +1162,10 @@ dat$ARBEITSMARKT %>%
   scale_y_continuous(labels = scales::comma) + ggtitle("Unemployment rate in Munich")
 ```
 
-![](Munich_numbers_files/figure-gfm/charts_unemployed_percent-1.jpeg)<!-- -->
+![](Munich_numbers_files/figure-markdown_github/charts_unemployed_percent-1.jpeg)
 
-# Counting NAs (missing data)
+Counting NAs (missing data)
+===========================
 
 ``` r
 ##########################
@@ -1839,189 +1184,107 @@ head(nasCount) %>% kable()
 ```
 
 <table>
-
 <thead>
-
 <tr>
-
 <th style="text-align:left;">
-
 </th>
-
 <th style="text-align:right;">
-
 NAs\_proc
-
 </th>
-
 <th style="text-align:left;">
-
 field\_name
-
 </th>
-
 </tr>
-
 </thead>
-
 <tbody>
-
 <tr>
-
 <td style="text-align:left;">
-
 WITTERUNG - Luftfeuchtigkeit - Mittlere relative Luftfeuchtigkeit
-
 </td>
-
 <td style="text-align:right;">
-
 0.0084746
-
 </td>
-
 <td style="text-align:left;">
-
 WITTERUNG - Luftfeuchtigkeit - Mittlere relative Luftfeuchtigkeit
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:left;">
-
 WITTERUNG - Lufttemperatur - Höchste Lufttemperatur
-
 </td>
-
 <td style="text-align:right;">
-
 0.0084746
-
 </td>
-
 <td style="text-align:left;">
-
 WITTERUNG - Lufttemperatur - Höchste Lufttemperatur
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:left;">
-
 WITTERUNG - Lufttemperatur - Mittlere Lufttemperatur
-
 </td>
-
 <td style="text-align:right;">
-
 0.0084746
-
 </td>
-
 <td style="text-align:left;">
-
 WITTERUNG - Lufttemperatur - Mittlere Lufttemperatur
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:left;">
-
 WITTERUNG - Lufttemperatur - Tiefste Lufttemperatur
-
 </td>
-
 <td style="text-align:right;">
-
 0.0084746
-
 </td>
-
 <td style="text-align:left;">
-
 WITTERUNG - Lufttemperatur - Tiefste Lufttemperatur
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:left;">
-
 WITTERUNG - Niederschlag - Niederschlagsmenge insgesamt
-
 </td>
-
 <td style="text-align:right;">
-
 0.0084746
-
 </td>
-
 <td style="text-align:left;">
-
 WITTERUNG - Niederschlag - Niederschlagsmenge insgesamt
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:left;">
-
 WITTERUNG - Niederschlag - Tage mit Niederschlägen
-
 </td>
-
 <td style="text-align:right;">
-
 0.0084746
-
 </td>
-
 <td style="text-align:left;">
-
-WITTERUNG - Niederschlag - Tage mit
-Niederschlägen
-
+WITTERUNG - Niederschlag - Tage mit Niederschlägen
 </td>
-
 </tr>
-
 </tbody>
-
 </table>
-
 ``` r
 nasFinal <- data.frame("field_name" =  nasCount$field_name, "NAs_proc" = nasCount$NAs_proc)
 plot(nasFinal$NAs_proc, main="Percent of missing values for all variables")
 abline(h=0.1, col="blue")
 ```
 
-![](Munich_numbers_files/figure-gfm/prepare_count_of_NAs-1.jpeg)<!-- -->
+![](Munich_numbers_files/figure-markdown_github/prepare_count_of_NAs-1.jpeg)
 
 ``` r
 rm(nasCount)
 ##########################
 ```
 
-we will **cut all variables filled below 10%** (so all above the blue
-line).
+we will **cut all variables filled below 10%** (so all above the blue line).
 
-# Explore correlations
+Explore correlations
+====================
 
-## simple use of cor()
+simple use of cor()
+-------------------
 
 ``` r
 ##########################
@@ -2076,7 +1339,8 @@ length(col_has_over_90)
 #( dsCor[,col_has_over_90] )
 ```
 
-## the correlate package
+the correlate package
+---------------------
 
 ``` r
 library(corrr)
@@ -2345,36 +1609,36 @@ dsAgg %>%
 ##########################
 ```
 
-# Next steps
+Next steps
+==========
 
-  - we look at cross-topic correlations (assuming that inter-topic
-    correlations are logical: highest to lowest temperature f.e.)
-  - explore some highly correlated numbers
-  - **BEWARE OF CONFOUNDING VARIABLES**
+-   we look at cross-topic correlations (assuming that inter-topic correlations are logical: highest to lowest temperature f.e.)
+-   explore some highly correlated numbers
+-   **BEWARE OF CONFOUNDING VARIABLES**
 
-## Highly Correlated variables
+Highly Correlated variables
+---------------------------
 
-These are pure sample examples out of
-\~100
+These are pure sample examples out of ~100
 
 ``` r
 plot(dsFinal$`BEVÖLKERUNG - Altersgruppen - Rentner/innen (65 J. und älter)`, dsFinal$`SOZIALE LEISTUNGEN - Empfänger nach SGB XII - Empfänger/innen insges.`,
      main="Old-age pensioner and social welfare recipients")
 ```
 
-![](Munich_numbers_files/figure-gfm/prepare_correlation_charts-1.jpeg)<!-- -->
+![](Munich_numbers_files/figure-markdown_github/prepare_correlation_charts-1.jpeg)
 
 ``` r
 plot(dsFinal$`BEVÖLKERUNG - Familienstand - geschieden`, dsFinal$`KFZ-Bestand - Pkw-Kraftstoffarten - Diesel gesamt`,
      main="Divorces and Diesel cars")
 ```
 
-![](Munich_numbers_files/figure-gfm/prepare_correlation_charts-2.jpeg)<!-- -->
+![](Munich_numbers_files/figure-markdown_github/prepare_correlation_charts-2.jpeg)
 
-## linear models
+linear models
+-------------
 
-Handworkers by number of diesel cars and total
-population
+Handworkers by number of diesel cars and total population
 
 ``` r
 model.lm <- lm(`WIRTSCHAFT - Handwerksbetriebe - Handwerk f. den priv. Bedarf` ~ `KFZ-Bestand - Pkw-Kraftstoffarten - Diesel gesamt` + `BEVÖLKERUNG - Geschlecht und Staatsangehörigkeit - Einwohner/innen insgesamt`, data = dsFinal)
@@ -2424,6 +1688,6 @@ summary(model.lm)
 plot(model.lm)
 ```
 
-![](Munich_numbers_files/figure-gfm/prepare_linear_models-1.jpeg)<!-- -->![](Munich_numbers_files/figure-gfm/prepare_linear_models-2.jpeg)<!-- -->![](Munich_numbers_files/figure-gfm/prepare_linear_models-3.jpeg)<!-- -->![](Munich_numbers_files/figure-gfm/prepare_linear_models-4.jpeg)<!-- -->
+![](Munich_numbers_files/figure-markdown_github/prepare_linear_models-1.jpeg)![](Munich_numbers_files/figure-markdown_github/prepare_linear_models-2.jpeg)![](Munich_numbers_files/figure-markdown_github/prepare_linear_models-3.jpeg)![](Munich_numbers_files/figure-markdown_github/prepare_linear_models-4.jpeg)
 
 :)
