@@ -187,6 +187,14 @@ dat$TOURISMUS %>%
   facet_wrap(~AUSPRAEGUNG, scales = "free", nrow=3) +
   theme_classic()+ 
   geom_smooth() + scale_y_continuous(position = "right", labels = scales::comma) + ggtitle("monthly trend - Turist guests")
+
+dsFinal$id <- 1:nrow(dsFinal)
+lm.mod.tourists <- lm(`TOURISMUS - Gäste - Ausland` ~ id, data = dsFinal)
+cat(paste0("International tourists grow yearly by: ", formatC(12*lm.mod.tourists$coefficients[[2]], format="f", big.mark = ",", digits=0), " (linear growth)\n" ))
+lm.mod.tourists <- lm(`TOURISMUS - Gäste - Inland` ~ id, data = dsFinal)
+cat(paste0("Local tourists grow yearly by: ", formatC(12*lm.mod.tourists$coefficients[[2]], format="f", big.mark = ",", digits=0), " (linear growth)\n" ))
+dsFinal$id <- NULL
+
 ```
 
 ## Population
@@ -258,6 +266,7 @@ dat$BEVÖLKERUNG %>%
   facet_wrap(~AUSPRAEGUNG) +
   theme_classic()+ 
   scale_y_continuous(labels = scales::comma) + ggtitle("Munich Inhabitants (male, female, all)")
+
 ```
 
 ### German inhabitants (all & gender)
@@ -420,6 +429,31 @@ dat$ARBEITSMARKT %>%
   facet_wrap(~AUSPRAEGUNG, scales = "free") +
   theme_classic()+ 
   scale_y_continuous(labels = scales::comma) + ggtitle("Unemployment rate in Munich")
+```
+
+
+## Cars in Munich
+### large trends
+
+```{r charts_cars, message=FALSE}
+dat$`KFZ-Bestand` %>%
+  filter(str_detect(AUSPRAEGUNG, 'gesamt')) %>%
+  mutate(Month = as.Date(paste0(MONAT,'01'), format = '%Y%m%d')) %>%
+  arrange(-WERT) %>% # sort
+  mutate_at(vars(AUSPRAEGUNG), funs(factor(., levels=unique(.)))) %>% # convert to factor
+  ggplot(., aes(x=Month, y = WERT, group=AUSPRAEGUNG)) + 
+  geom_line() + 
+  facet_wrap(~AUSPRAEGUNG, scales = "free") +
+  theme_classic()+ 
+  scale_y_continuous(labels = scales::comma) + ggtitle("Cars in Munich (#)")
+```
+
+### relation to population growth
+
+```{r lm_cars_to_population, message=FALSE}
+mod.lm.cars = lm(dsFinal$`KFZ-Bestand - Fahrzeugtypen - Kraftfahrzeuge insgesamt` ~ dsFinal$`BEVÖLKERUNG - Geschlecht und Staatsangehörigkeit - Einwohner/innen insgesamt`)
+summary(mod.lm.cars)
+mod.lm.cars$coefficients
 ```
 
 # Counting NAs (missing data)
