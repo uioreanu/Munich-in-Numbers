@@ -1,37 +1,45 @@
 Munich in numbers
 ================
-CU
-10/6/2019
+Calin
+30 November, 2019
 
--   [Brief exploratory analysis](#brief-exploratory-analysis)
-    -   [Data](#data)
--   [General Trends (monthly)](#general-trends-monthly)
-    -   [Cinema visitors](#cinema-visitors)
-    -   [OlympiaPark & Zoo](#olympiapark-zoo)
-    -   [weather trends](#weather-trends)
-    -   [Tourists](#tourists)
-    -   [Population](#population)
-    -   [Religion](#religion)
-    -   [Unemployment (gender & nationality)](#unemployment-gender-nationality)
--   [Counting NAs (missing data)](#counting-nas-missing-data)
--   [Explore correlations](#explore-correlations)
-    -   [simple use of cor()](#simple-use-of-cor)
-    -   [the correlate package](#the-correlate-package)
--   [Next steps](#next-steps)
-    -   [Highly Correlated variables](#highly-correlated-variables)
-    -   [linear models](#linear-models)
+  - [Brief exploratory analysis](#brief-exploratory-analysis)
+      - [Data](#data)
+  - [General Trends (monthly)](#general-trends-monthly)
+      - [Cinema visitors](#cinema-visitors)
+      - [OlympiaPark & Zoo](#olympiapark-zoo)
+      - [weather trends](#weather-trends)
+      - [Tourists](#tourists)
+      - [Population](#population)
+      - [Religion](#religion)
+      - [Construction](#construction)
+      - [Unemployment (gender &
+        nationality)](#unemployment-gender-nationality)
+      - [Cars in Munich](#cars-in-munich)
+  - [Counting NAs (missing data)](#counting-nas-missing-data)
+  - [Explore correlations](#explore-correlations)
+      - [simple use of cor()](#simple-use-of-cor)
+      - [the correlate package](#the-correlate-package)
+  - [Next steps](#next-steps)
+      - [Highly Correlated variables](#highly-correlated-variables)
+      - [linear models](#linear-models)
 
-Brief exploratory analysis
-==========================
+# Brief exploratory analysis
 
 This is a brief EDA of Munich stats.
 
-Data
-----
+## Data
 
 ### source
 
-Thanks to **Statistische Amt München** for making the data available on a monthly basis. They make way more data available, these are solely main KPIs. Source of data: <http://www.mstatistik-muenchen.de/monatszahlenmonitoring/export/export.php>. Official Data exploration portal: <http://www.mstatistik-muenchen.de/monatszahlenmonitoring/atlas.html?indicator=i158&date=Jan&select=20,19&select2=JAHR&indicator2=i0>. Data here is extracted from Excel, processed into data.frames and correlation charts
+Thanks to **Statistische Amt München** for making the data available on
+a monthly basis. They make way more data available, these are solely
+main KPIs. Source of data:
+<http://www.mstatistik-muenchen.de/monatszahlenmonitoring/export/export.php>.
+Official Data exploration portal:
+<http://www.mstatistik-muenchen.de/monatszahlenmonitoring/atlas.html?indicator=i158&date=Jan&select=20,19&select2=JAHR&indicator2=i0>.
+Data here is extracted from Excel, processed into data.frames and
+correlation charts
 
 ### raw
 
@@ -44,209 +52,414 @@ as.data.frame(lapply(dat, dim)) %>%
 ```
 
 <table>
+
 <thead>
+
 <tr>
+
 <th style="text-align:left;">
+
 rowname
+
 </th>
+
 <th style="text-align:right;">
+
 INHALTSÜBERSICHT
+
 </th>
+
 <th style="text-align:right;">
+
 ARBEITSMARKT
+
 </th>
+
 <th style="text-align:right;">
+
 BAUEN
+
 </th>
+
 <th style="text-align:right;">
+
 BEVÖLKERUNG
+
 </th>
+
 <th style="text-align:right;">
+
 EINBÜRGERUNGEN
+
 </th>
+
 <th style="text-align:right;">
+
 FEUERWEHR.MÜNCHEN
+
 </th>
+
 <th style="text-align:right;">
+
 FLUGVERKEHR
+
 </th>
+
 <th style="text-align:right;">
+
 FREIZEIT
+
 </th>
+
 <th style="text-align:right;">
+
 KFZ.Bestand
+
 </th>
+
 <th style="text-align:right;">
+
 KFZ.Neuzulassungen
+
 </th>
+
 <th style="text-align:right;">
+
 KINOS
+
 </th>
+
 <th style="text-align:right;">
+
 MUSEEN
+
 </th>
+
 <th style="text-align:right;">
+
 ORCHESTER
+
 </th>
+
 <th style="text-align:right;">
+
 SOZIALE.LEISTUNGEN
+
 </th>
+
 <th style="text-align:right;">
+
 THEATER
+
 </th>
+
 <th style="text-align:right;">
+
 TOURISMUS
+
 </th>
+
 <th style="text-align:right;">
+
 VERKEHRSUNFÄLLE
+
 </th>
+
 <th style="text-align:right;">
+
 WIRTSCHAFT
+
 </th>
+
 <th style="text-align:right;">
+
 WITTERUNG
+
 </th>
+
 <th style="text-align:right;">
+
 IMPRESSUM
+
 </th>
+
 </tr>
+
 </thead>
+
 <tbody>
+
 <tr>
+
 <td style="text-align:left;">
+
 1
+
 </td>
+
 <td style="text-align:right;">
+
 288
+
 </td>
+
 <td style="text-align:right;">
-2119
+
+2158
+
 </td>
+
 <td style="text-align:right;">
+
 720
+
 </td>
+
 <td style="text-align:right;">
-19109
+
+19385
+
 </td>
+
 <td style="text-align:right;">
-660
+
+670
+
 </td>
+
 <td style="text-align:right;">
-1914
+
+1932
+
 </td>
+
 <td style="text-align:right;">
-1880
+
+1904
+
 </td>
+
 <td style="text-align:right;">
-1639
+
+1666
+
 </td>
+
 <td style="text-align:right;">
-4984
+
+5056
+
 </td>
+
 <td style="text-align:right;">
-2592
+
+2640
+
 </td>
+
 <td style="text-align:right;">
+
 228
+
 </td>
+
 <td style="text-align:right;">
-2068
+
+2087
+
 </td>
+
 <td style="text-align:right;">
-1416
+
+1428
+
 </td>
+
 <td style="text-align:right;">
-2055
+
+2115
+
 </td>
+
 <td style="text-align:right;">
-4056
+
+4098
+
 </td>
+
 <td style="text-align:right;">
-954
+
+966
+
 </td>
+
 <td style="text-align:right;">
+
 1596
+
 </td>
+
 <td style="text-align:right;">
-4462
+
+4550
+
 </td>
+
 <td style="text-align:right;">
-1638
+
+1659
+
 </td>
+
 <td style="text-align:right;">
+
 13
+
 </td>
+
 </tr>
+
 <tr>
+
 <td style="text-align:left;">
+
 2
+
 </td>
+
 <td style="text-align:right;">
+
 7
+
 </td>
+
 <td style="text-align:right;">
+
 9
+
 </td>
+
 <td style="text-align:right;">
+
 9
+
 </td>
+
 <td style="text-align:right;">
+
 9
+
 </td>
+
 <td style="text-align:right;">
+
 9
+
 </td>
+
 <td style="text-align:right;">
+
 9
+
 </td>
+
 <td style="text-align:right;">
+
 9
+
 </td>
+
 <td style="text-align:right;">
+
 9
+
 </td>
+
 <td style="text-align:right;">
+
 9
+
 </td>
+
 <td style="text-align:right;">
+
 9
+
 </td>
+
 <td style="text-align:right;">
+
 9
+
 </td>
+
 <td style="text-align:right;">
+
 9
+
 </td>
+
 <td style="text-align:right;">
+
 9
+
 </td>
+
 <td style="text-align:right;">
+
 9
+
 </td>
+
 <td style="text-align:right;">
+
 9
+
 </td>
+
 <td style="text-align:right;">
+
 9
+
 </td>
+
 <td style="text-align:right;">
+
 9
+
 </td>
+
 <td style="text-align:right;">
+
 9
+
 </td>
+
 <td style="text-align:right;">
+
 9
+
 </td>
+
 <td style="text-align:right;">
+
 1
+
 </td>
+
 </tr>
+
 </tbody>
+
 </table>
+
 ### aggregated
 
-We'll now compress the **original disparated data** in one compact data.frame For that, we create dynamic column names and aggregate the monthly values The final result will be a large matrix (~300 columns) where each column represents a variable and the rows are the monthly values (20 yrs x 12 months)
+We’ll now compress the **original disparated data** in one compact
+data.frame For that, we create dynamic column names and aggregate the
+monthly values The final result will be a large matrix (\~300 columns)
+where each column represents a variable and the rows are the monthly
+values (20 yrs x 12 months)
 
 ``` r
 ##########################
@@ -289,7 +502,7 @@ dsFinal$month <- NULL
 dim(dsFinal)
 ```
 
-    ## [1] 236 288
+    ## [1] 238 288
 
 ``` r
 # dsFinal[1:10,1:2] %>% kable()
@@ -298,11 +511,9 @@ dim(dsFinal)
 ##########################
 ```
 
-General Trends (monthly)
-========================
+# General Trends (monthly)
 
-Cinema visitors
----------------
+## Cinema visitors
 
 ``` r
 ##########################
@@ -316,10 +527,9 @@ dat$KINOS %>%
     geom_smooth() + scale_y_continuous(labels = scales::comma) + ggtitle("Cinema Visitors")
 ```
 
-![](Munich_numbers_files/figure-markdown_github/charts_kinos-1.jpeg)
+![](Munich_numbers_files/figure-gfm/charts_kinos-1.jpeg)<!-- -->
 
-OlympiaPark & Zoo
------------------
+## OlympiaPark & Zoo
 
 ``` r
 dat$FREIZEIT %>%
@@ -333,16 +543,15 @@ dat$FREIZEIT %>%
     scale_y_continuous(labels = scales::comma) + ggtitle("Leisure")
 ```
 
-    ## Warning in max(WERT, na.rm = T): kein nicht-fehlendes Argument für max;
-    ## gebe -Inf zurück
+    ## Warning in max(WERT, na.rm = T): no non-missing arguments to max; returning
+    ## -Inf
+    
+    ## Warning in max(WERT, na.rm = T): no non-missing arguments to max; returning
+    ## -Inf
 
-    ## Warning in max(WERT, na.rm = T): kein nicht-fehlendes Argument für max;
-    ## gebe -Inf zurück
+![](Munich_numbers_files/figure-gfm/charts_olympiapark-1.jpeg)<!-- -->
 
-![](Munich_numbers_files/figure-markdown_github/charts_olympiapark-1.jpeg)
-
-weather trends
---------------
+## weather trends
 
 ### Sun & temperature
 
@@ -357,7 +566,7 @@ dat$WITTERUNG %>%
   geom_smooth() + scale_y_continuous(labels = scales::comma) + ggtitle("monthly weather trends")
 ```
 
-![](Munich_numbers_files/figure-markdown_github/charts_weather-1.jpeg)
+![](Munich_numbers_files/figure-gfm/charts_weather-1.jpeg)<!-- -->
 
 ### Rain
 
@@ -372,10 +581,9 @@ dat$WITTERUNG %>%
   geom_smooth() + scale_y_continuous(labels = scales::comma) + ggtitle("monthly weather trends")
 ```
 
-![](Munich_numbers_files/figure-markdown_github/charts_weather_rain-1.jpeg)
+![](Munich_numbers_files/figure-gfm/charts_weather_rain-1.jpeg)<!-- -->
 
-Tourists
---------
+## Tourists
 
 ``` r
 dat$TOURISMUS %>%
@@ -388,19 +596,37 @@ dat$TOURISMUS %>%
   geom_smooth() + scale_y_continuous(position = "right", labels = scales::comma) + ggtitle("monthly trend - Turist guests")
 ```
 
-![](Munich_numbers_files/figure-markdown_github/charts_tourism-1.jpeg)
+![](Munich_numbers_files/figure-gfm/charts_tourism-1.jpeg)<!-- -->
 
-Population
-----------
+``` r
+dsFinal$id <- 1:nrow(dsFinal)
+lm.mod.tourists <- lm(`TOURISMUS - Gäste - Ausland` ~ id, data = dsFinal)
+cat(paste0("International tourists grow yearly by: ", formatC(12*lm.mod.tourists$coefficients[[2]], format="f", big.mark = ",", digits=0), " (linear growth)\n" ))
+```
 
-### German population 2010-today
+    ## International tourists grow yearly by: 12,230 (linear growth)
+
+``` r
+lm.mod.tourists <- lm(`TOURISMUS - Gäste - Inland` ~ id, data = dsFinal)
+cat(paste0("Local tourists grow yearly by: ", formatC(12*lm.mod.tourists$coefficients[[2]], format="f", big.mark = ",", digits=0), " (linear growth)\n" ))
+```
+
+    ## Local tourists grow yearly by: 13,386 (linear growth)
+
+``` r
+dsFinal$id <- NULL
+```
+
+## Population
+
+### German population 2016-today
 
 ``` r
 dsFinal %>%
   rownames_to_column() %>%
   select(rowname, `german population` =  `BEVÖLKERUNG - Geschlecht und Staatsangehörigkeit - Deutsche insgesamt`) %>%
   mutate(Month = as.Date(paste0(rowname,'01'), format = '%Y%m%d')) %>%
-  filter(Month>='2010-01-01') -> ds
+  filter(Month>='2016-01-01') -> ds
 ds$id <- 1:nrow(ds)
 fit <- lm(`german population`~id, ds)
 
@@ -418,20 +644,20 @@ ds %>%
                                        "P =", signif(summary(fit)$coef[2,4], 2) )))
 ```
 
-![](Munich_numbers_files/figure-markdown_github/charts_population_germans_only-1.jpeg)
+![](Munich_numbers_files/figure-gfm/charts_population_germans_only-1.jpeg)<!-- -->
 
 ``` r
 rm(ds)
 ```
 
-### Foreigners 2010-today
+### Foreigners 2016-today
 
 ``` r
 dsFinal %>%
   rownames_to_column() %>%
   select(rowname, `foreigners` = `BEVÖLKERUNG - Geschlecht und Staatsangehörigkeit - Ausländer/innen insgesamt`) %>%
   mutate(Month = as.Date(paste0(rowname,'01'), format = '%Y%m%d')) %>%
-  filter(Month>='2010-01-01') -> ds
+  filter(Month>='2016-01-01') -> ds
 ds$id <- 1:nrow(ds)
 fit <- lm(`foreigners`~id, ds)
 ds %>%
@@ -447,11 +673,9 @@ ds %>%
                                        "P =", signif(summary(fit)$coef[2,4], 2) )))
 ```
 
-    ## Warning: Removed 2 rows containing non-finite values (stat_smooth).
+    ## Warning: Removed 1 rows containing non-finite values (stat_smooth).
 
-    ## Warning: Removed 1 rows containing missing values (geom_path).
-
-![](Munich_numbers_files/figure-markdown_github/charts_population_foreigners_only-1.jpeg)
+![](Munich_numbers_files/figure-gfm/charts_population_foreigners_only-1.jpeg)<!-- -->
 
 ``` r
 rm(ds)
@@ -474,19 +698,16 @@ dat$BEVÖLKERUNG %>%
 ```
 
     ## Warning: funs() is soft deprecated as of dplyr 0.8.0
-    ## Please use a list of either functions or lambdas: 
+    ## please use list() instead
     ## 
-    ##   # Simple named list: 
-    ##   list(mean = mean, median = median)
+    ##   # Before:
+    ##   funs(name = f(.))
     ## 
-    ##   # Auto named with `tibble::lst()`: 
-    ##   tibble::lst(mean, median)
-    ## 
-    ##   # Using lambdas
-    ##   list(~ mean(., trim = .2), ~ median(., na.rm = TRUE))
+    ##   # After: 
+    ##   list(name = ~ f(.))
     ## This warning is displayed once per session.
 
-![](Munich_numbers_files/figure-markdown_github/charts_population_all-1.jpeg)
+![](Munich_numbers_files/figure-gfm/charts_population_all-1.jpeg)<!-- -->
 
 ### German inhabitants (all & gender)
 
@@ -504,7 +725,7 @@ dat$BEVÖLKERUNG %>%
   scale_y_continuous(labels = scales::comma) + ggtitle("Germans in Munich (male, female, all)")
 ```
 
-![](Munich_numbers_files/figure-markdown_github/charts_population_german-1.jpeg)
+![](Munich_numbers_files/figure-gfm/charts_population_german-1.jpeg)<!-- -->
 
 ### Foreign inhabitants (all & gender)
 
@@ -522,7 +743,7 @@ dat$BEVÖLKERUNG %>%
   scale_y_continuous(labels = scales::comma) + ggtitle("Foreigners in Munich (male, female, all)")
 ```
 
-![](Munich_numbers_files/figure-markdown_github/charts_population_foreign-1.jpeg)
+![](Munich_numbers_files/figure-gfm/charts_population_foreign-1.jpeg)<!-- -->
 
 ### Female share
 
@@ -557,506 +778,1011 @@ dsFinal %>%
 ```
 
 <table class="table table-striped table-hover table-condensed table-responsive" style="margin-left: auto; margin-right: auto;">
+
 <thead>
+
 <tr>
+
 <th style="border-bottom:hidden" colspan="1">
+
 </th>
+
 <th style="border-bottom:hidden; padding-bottom:0; padding-left:3px;padding-right:3px;text-align: center; " colspan="4">
+
+<div style="border-bottom: 1px solid #ddd; padding-bottom: 5px; ">
+
 in thousands
 
-</th>
-<th style="border-bottom:hidden; padding-bottom:0; padding-left:3px;padding-right:3px;text-align: center; " colspan="2">
-percentages
+</div>
 
 </th>
+
+<th style="border-bottom:hidden; padding-bottom:0; padding-left:3px;padding-right:3px;text-align: center; " colspan="2">
+
+<div style="border-bottom: 1px solid #ddd; padding-bottom: 5px; ">
+
+percentages
+
+</div>
+
+</th>
+
 </tr>
+
 <tr>
+
 <th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+
 year
+
 </th>
+
 <th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+
 german\_female
+
 </th>
+
 <th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+
 foreign\_female
+
 </th>
+
 <th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+
 all\_german
+
 </th>
+
 <th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+
 all\_female
+
 </th>
+
 <th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+
 female\_share\_among\_germans
+
 </th>
+
 <th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+
 german\_female\_share
+
 </th>
+
 </tr>
+
 </thead>
+
 <tbody>
+
 <tr>
+
 <td style="text-align:left;">
+
 2000
+
 </td>
+
 <td style="text-align:right;">
+
 514
+
 </td>
+
 <td style="text-align:right;">
+
 127
+
 </td>
+
 <td style="text-align:right;">
+
 960
+
 </td>
+
 <td style="text-align:right;">
+
 641
+
 </td>
+
 <td style="text-align:right;">
+
 0.54
+
 </td>
+
 <td style="text-align:right;">
+
 0.80
+
 </td>
+
 </tr>
+
 <tr>
+
 <td style="text-align:left;">
+
 2001
+
 </td>
+
 <td style="text-align:right;">
+
 518
+
 </td>
+
 <td style="text-align:right;">
+
 130
+
 </td>
+
 <td style="text-align:right;">
+
 970
+
 </td>
+
 <td style="text-align:right;">
+
 648
+
 </td>
+
 <td style="text-align:right;">
+
 0.53
+
 </td>
+
 <td style="text-align:right;">
+
 0.80
+
 </td>
+
 </tr>
+
 <tr>
+
 <td style="text-align:left;">
+
 2002
+
 </td>
+
 <td style="text-align:right;">
+
 519
+
 </td>
+
 <td style="text-align:right;">
+
 132
+
 </td>
+
 <td style="text-align:right;">
+
 975
+
 </td>
+
 <td style="text-align:right;">
+
 651
+
 </td>
+
 <td style="text-align:right;">
+
 0.53
+
 </td>
+
 <td style="text-align:right;">
+
 0.80
+
 </td>
+
 </tr>
+
 <tr>
+
 <td style="text-align:left;">
+
 2003
+
 </td>
+
 <td style="text-align:right;">
+
 518
+
 </td>
+
 <td style="text-align:right;">
+
 135
+
 </td>
+
 <td style="text-align:right;">
+
 976
+
 </td>
+
 <td style="text-align:right;">
+
 653
+
 </td>
+
 <td style="text-align:right;">
+
 0.53
+
 </td>
+
 <td style="text-align:right;">
+
 0.79
+
 </td>
+
 </tr>
+
 <tr>
+
 <td style="text-align:left;">
+
 2004
+
 </td>
+
 <td style="text-align:right;">
+
 518
+
 </td>
+
 <td style="text-align:right;">
+
 137
+
 </td>
+
 <td style="text-align:right;">
+
 977
+
 </td>
+
 <td style="text-align:right;">
+
 655
+
 </td>
+
 <td style="text-align:right;">
+
 0.53
+
 </td>
+
 <td style="text-align:right;">
+
 0.79
+
 </td>
+
 </tr>
+
 <tr>
+
 <td style="text-align:left;">
+
 2005
+
 </td>
+
 <td style="text-align:right;">
+
 520
+
 </td>
+
 <td style="text-align:right;">
+
 141
+
 </td>
+
 <td style="text-align:right;">
+
 985
+
 </td>
+
 <td style="text-align:right;">
+
 661
+
 </td>
+
 <td style="text-align:right;">
+
 0.53
+
 </td>
+
 <td style="text-align:right;">
+
 0.79
+
 </td>
+
 </tr>
+
 <tr>
+
 <td style="text-align:left;">
+
 2006
+
 </td>
+
 <td style="text-align:right;">
+
 531
+
 </td>
+
 <td style="text-align:right;">
+
 144
+
 </td>
+
 <td style="text-align:right;">
+
 1,008
+
 </td>
+
 <td style="text-align:right;">
+
 675
+
 </td>
+
 <td style="text-align:right;">
+
 0.53
+
 </td>
+
 <td style="text-align:right;">
+
 0.79
+
 </td>
+
 </tr>
+
 <tr>
+
 <td style="text-align:left;">
+
 2007
+
 </td>
+
 <td style="text-align:right;">
+
 542
+
 </td>
+
 <td style="text-align:right;">
+
 147
+
 </td>
+
 <td style="text-align:right;">
+
 1,031
+
 </td>
+
 <td style="text-align:right;">
+
 689
+
 </td>
+
 <td style="text-align:right;">
+
 0.53
+
 </td>
+
 <td style="text-align:right;">
+
 0.79
+
 </td>
+
 </tr>
+
 <tr>
+
 <td style="text-align:left;">
+
 2008
+
 </td>
+
 <td style="text-align:right;">
+
 548
+
 </td>
+
 <td style="text-align:right;">
+
 150
+
 </td>
+
 <td style="text-align:right;">
+
 1,045
+
 </td>
+
 <td style="text-align:right;">
+
 698
+
 </td>
+
 <td style="text-align:right;">
+
 0.52
+
 </td>
+
 <td style="text-align:right;">
+
 0.79
+
 </td>
+
 </tr>
+
 <tr>
+
 <td style="text-align:left;">
+
 2009
+
 </td>
+
 <td style="text-align:right;">
+
 551
+
 </td>
+
 <td style="text-align:right;">
+
 149
+
 </td>
+
 <td style="text-align:right;">
+
 1,052
+
 </td>
+
 <td style="text-align:right;">
+
 700
+
 </td>
+
 <td style="text-align:right;">
+
 0.52
+
 </td>
+
 <td style="text-align:right;">
+
 0.79
+
 </td>
+
 </tr>
+
 <tr>
+
 <td style="text-align:left;">
+
 2010
+
 </td>
+
 <td style="text-align:right;">
+
 554
+
 </td>
+
 <td style="text-align:right;">
+
 151
+
 </td>
+
 <td style="text-align:right;">
+
 1,059
+
 </td>
+
 <td style="text-align:right;">
+
 705
+
 </td>
+
 <td style="text-align:right;">
+
 0.52
+
 </td>
+
 <td style="text-align:right;">
+
 0.79
+
 </td>
+
 </tr>
+
 <tr>
+
 <td style="text-align:left;">
+
 2011
+
 </td>
+
 <td style="text-align:right;">
+
 558
+
 </td>
+
 <td style="text-align:right;">
+
 157
+
 </td>
+
 <td style="text-align:right;">
+
 1,070
+
 </td>
+
 <td style="text-align:right;">
+
 716
+
 </td>
+
 <td style="text-align:right;">
+
 0.52
+
 </td>
+
 <td style="text-align:right;">
+
 0.78
+
 </td>
+
 </tr>
+
 <tr>
+
 <td style="text-align:left;">
+
 2012
+
 </td>
+
 <td style="text-align:right;">
+
 562
+
 </td>
+
 <td style="text-align:right;">
+
 166
+
 </td>
+
 <td style="text-align:right;">
+
 1,081
+
 </td>
+
 <td style="text-align:right;">
+
 728
+
 </td>
+
 <td style="text-align:right;">
+
 0.52
+
 </td>
+
 <td style="text-align:right;">
+
 0.77
+
 </td>
+
 </tr>
+
 <tr>
+
 <td style="text-align:left;">
+
 2013
+
 </td>
+
 <td style="text-align:right;">
+
 566
+
 </td>
+
 <td style="text-align:right;">
+
 174
+
 </td>
+
 <td style="text-align:right;">
+
 1,089
+
 </td>
+
 <td style="text-align:right;">
+
 740
+
 </td>
+
 <td style="text-align:right;">
+
 0.52
+
 </td>
+
 <td style="text-align:right;">
+
 0.76
+
 </td>
+
 </tr>
+
 <tr>
+
 <td style="text-align:left;">
+
 2014
+
 </td>
+
 <td style="text-align:right;">
+
 568
+
 </td>
+
 <td style="text-align:right;">
+
 184
+
 </td>
+
 <td style="text-align:right;">
+
 1,095
+
 </td>
+
 <td style="text-align:right;">
+
 752
+
 </td>
+
 <td style="text-align:right;">
+
 0.52
+
 </td>
+
 <td style="text-align:right;">
+
 0.76
+
 </td>
+
 </tr>
+
 <tr>
+
 <td style="text-align:left;">
+
 2015
+
 </td>
+
 <td style="text-align:right;">
+
 570
+
 </td>
+
 <td style="text-align:right;">
+
 194
+
 </td>
+
 <td style="text-align:right;">
+
 1,099
+
 </td>
+
 <td style="text-align:right;">
+
 763
+
 </td>
+
 <td style="text-align:right;">
+
 0.52
+
 </td>
+
 <td style="text-align:right;">
+
 0.75
+
 </td>
+
 </tr>
+
 <tr>
+
 <td style="text-align:left;">
+
 2016
+
 </td>
+
 <td style="text-align:right;">
+
 571
+
 </td>
+
 <td style="text-align:right;">
+
 204
+
 </td>
+
 <td style="text-align:right;">
+
 1,104
+
 </td>
+
 <td style="text-align:right;">
+
 775
+
 </td>
+
 <td style="text-align:right;">
+
 0.52
+
 </td>
+
 <td style="text-align:right;">
+
 0.74
+
 </td>
+
 </tr>
+
 <tr>
+
 <td style="text-align:left;">
+
 2017
+
 </td>
+
 <td style="text-align:right;">
+
 572
+
 </td>
+
 <td style="text-align:right;">
+
 207
+
 </td>
+
 <td style="text-align:right;">
+
 1,107
+
 </td>
+
 <td style="text-align:right;">
+
 779
+
 </td>
+
 <td style="text-align:right;">
+
 0.52
+
 </td>
+
 <td style="text-align:right;">
+
 0.73
+
 </td>
+
 </tr>
+
 <tr>
+
 <td style="text-align:left;">
+
 2018
+
 </td>
+
 <td style="text-align:right;">
+
 571
+
 </td>
+
 <td style="text-align:right;">
+
 205
+
 </td>
+
 <td style="text-align:right;">
+
 1,106
+
 </td>
+
 <td style="text-align:right;">
+
 776
+
 </td>
+
 <td style="text-align:right;">
+
 0.52
+
 </td>
+
 <td style="text-align:right;">
+
 0.74
+
 </td>
+
 </tr>
+
 <tr>
+
 <td style="text-align:left;">
+
 2019
+
 </td>
+
 <td style="text-align:right;">
-573
+
+574
+
 </td>
+
 <td style="text-align:right;">
-209
+
+210
+
 </td>
+
 <td style="text-align:right;">
-1,110
+
+1,111
+
 </td>
+
 <td style="text-align:right;">
-782
+
+783
+
 </td>
+
 <td style="text-align:right;">
+
 0.52
+
 </td>
+
 <td style="text-align:right;">
+
 0.73
+
 </td>
+
 </tr>
+
 </tbody>
+
 </table>
+
 #### among foreigners
 
 ``` r
@@ -1069,7 +1795,7 @@ plot(
     type="o")
 ```
 
-![](Munich_numbers_files/figure-markdown_github/female_share_foreigners-1.jpeg)
+![](Munich_numbers_files/figure-gfm/female_share_foreigners-1.jpeg)<!-- -->
 
 ### Family status
 
@@ -1086,7 +1812,7 @@ dat$BEVÖLKERUNG %>%
   scale_y_continuous(labels = scales::comma) + ggtitle("monthly trend - population by family status")
 ```
 
-![](Munich_numbers_files/figure-markdown_github/charts_population-1.jpeg)
+![](Munich_numbers_files/figure-gfm/charts_population-1.jpeg)<!-- -->
 
 ``` r
 #ggsave("monthly trend - population by family status.png", dpi=400, dev='png', height=4, width=5, units="in", scale = 2)
@@ -1107,10 +1833,9 @@ dat$BEVÖLKERUNG %>%
     geom_smooth() + scale_y_continuous(labels = scales::comma) + ggtitle("Population by age group")
 ```
 
-![](Munich_numbers_files/figure-markdown_github/charts_population_by_age-1.jpeg)
+![](Munich_numbers_files/figure-gfm/charts_population_by_age-1.jpeg)<!-- -->
 
-Religion
---------
+## Religion
 
 ``` r
 dat$BEVÖLKERUNG %>%
@@ -1123,10 +1848,41 @@ dat$BEVÖLKERUNG %>%
     geom_smooth() + scale_y_continuous(labels = scales::comma) + ggtitle("Religion in Munich")
 ```
 
-![](Munich_numbers_files/figure-markdown_github/charts_population_religion-1.jpeg)
+![](Munich_numbers_files/figure-gfm/charts_population_religion-1.jpeg)<!-- -->
 
-Unemployment (gender & nationality)
------------------------------------
+## Construction
+
+### approved
+
+``` r
+dat$BAUEN %>%
+  filter(MONATSZAHL %in% c("Baugenehmigungen")) %>%
+  mutate(Month = as.Date(paste0(MONAT,'01'), format = '%Y%m%d')) %>%
+  ggplot(., aes(x=Month, y = WERT, group=AUSPRAEGUNG)) + 
+  geom_line() + 
+  facet_wrap(~AUSPRAEGUNG, scales = "free") +
+  theme_classic()+ 
+  geom_smooth() + scale_y_continuous(labels = scales::comma) + ggtitle("Approved constructions")
+```
+
+![](Munich_numbers_files/figure-gfm/charts_construction_approved-1.jpeg)<!-- -->
+
+### built
+
+``` r
+dat$BAUEN %>%
+  filter(MONATSZAHL %in% c("Baufertigstellungen")) %>%
+  mutate(Month = as.Date(paste0(MONAT,'01'), format = '%Y%m%d')) %>%
+  ggplot(., aes(x=Month, y = WERT, group=AUSPRAEGUNG)) + 
+  geom_line() + 
+  facet_wrap(~AUSPRAEGUNG, scales = "free") +
+  theme_classic()+ 
+  geom_smooth() + scale_y_continuous(labels = scales::comma) + ggtitle("Built constructions")
+```
+
+![](Munich_numbers_files/figure-gfm/charts_construction_built-1.jpeg)<!-- -->
+
+## Unemployment (gender & nationality)
 
 ### absolute numbers
 
@@ -1144,7 +1900,7 @@ dat$ARBEITSMARKT %>%
   scale_y_continuous(labels = scales::comma) + ggtitle("Unemployed in Munich (#)")
 ```
 
-![](Munich_numbers_files/figure-markdown_github/charts_unemployed_absolute-1.jpeg)
+![](Munich_numbers_files/figure-gfm/charts_unemployed_absolute-1.jpeg)<!-- -->
 
 ### as percentages
 
@@ -1162,10 +1918,77 @@ dat$ARBEITSMARKT %>%
   scale_y_continuous(labels = scales::comma) + ggtitle("Unemployment rate in Munich")
 ```
 
-![](Munich_numbers_files/figure-markdown_github/charts_unemployed_percent-1.jpeg)
+![](Munich_numbers_files/figure-gfm/charts_unemployed_percent-1.jpeg)<!-- -->
 
-Counting NAs (missing data)
-===========================
+## Cars in Munich
+
+### large trends
+
+``` r
+dat$`KFZ-Bestand` %>%
+  filter(str_detect(AUSPRAEGUNG, 'gesamt')) %>%
+  mutate(Month = as.Date(paste0(MONAT,'01'), format = '%Y%m%d')) %>%
+  arrange(-WERT) %>% # sort
+  mutate_at(vars(AUSPRAEGUNG), funs(factor(., levels=unique(.)))) %>% # convert to factor
+  ggplot(., aes(x=Month, y = WERT, group=AUSPRAEGUNG)) + 
+  geom_line() + 
+  facet_wrap(~AUSPRAEGUNG, scales = "free") +
+  theme_classic()+ 
+  scale_y_continuous(labels = scales::comma) + ggtitle("Cars in Munich (#)")
+```
+
+![](Munich_numbers_files/figure-gfm/charts_cars-1.jpeg)<!-- -->
+
+### relation to population growth
+
+``` r
+mod.lm.cars = lm(dsFinal$`KFZ-Bestand - Fahrzeugtypen - Kraftfahrzeuge insgesamt` ~ dsFinal$`BEVÖLKERUNG - Geschlecht und Staatsangehörigkeit - Einwohner/innen insgesamt`)
+summary(mod.lm.cars)
+```
+
+    ## 
+    ## Call:
+    ## lm(formula = dsFinal$`KFZ-Bestand - Fahrzeugtypen - Kraftfahrzeuge insgesamt` ~ 
+    ##     dsFinal$`BEVÖLKERUNG - Geschlecht und Staatsangehörigkeit - Einwohner/innen insgesamt`)
+    ## 
+    ## Residuals:
+    ##     Min      1Q  Median      3Q     Max 
+    ## -100227  -11280    1308   13339   37824 
+    ## 
+    ## Coefficients:
+    ##                                                                                          Estimate
+    ## (Intercept)                                                                            -1.083e+05
+    ## dsFinal$`BEVÖLKERUNG - Geschlecht und Staatsangehörigkeit - Einwohner/innen insgesamt`  6.026e-01
+    ##                                                                                        Std. Error
+    ## (Intercept)                                                                             1.754e+04
+    ## dsFinal$`BEVÖLKERUNG - Geschlecht und Staatsangehörigkeit - Einwohner/innen insgesamt`  1.250e-02
+    ##                                                                                        t value
+    ## (Intercept)                                                                             -6.174
+    ## dsFinal$`BEVÖLKERUNG - Geschlecht und Staatsangehörigkeit - Einwohner/innen insgesamt`  48.218
+    ##                                                                                        Pr(>|t|)
+    ## (Intercept)                                                                            3.41e-09
+    ## dsFinal$`BEVÖLKERUNG - Geschlecht und Staatsangehörigkeit - Einwohner/innen insgesamt`  < 2e-16
+    ##                                                                                           
+    ## (Intercept)                                                                            ***
+    ## dsFinal$`BEVÖLKERUNG - Geschlecht und Staatsangehörigkeit - Einwohner/innen insgesamt` ***
+    ## ---
+    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+    ## 
+    ## Residual standard error: 18080 on 209 degrees of freedom
+    ##   (27 observations deleted due to missingness)
+    ## Multiple R-squared:  0.9175, Adjusted R-squared:  0.9171 
+    ## F-statistic:  2325 on 1 and 209 DF,  p-value: < 2.2e-16
+
+``` r
+mod.lm.cars$coefficients
+```
+
+    ##                                                                            (Intercept) 
+    ##                                                                          -1.082756e+05 
+    ## dsFinal$`BEVÖLKERUNG - Geschlecht und Staatsangehörigkeit - Einwohner/innen insgesamt` 
+    ##                                                                           6.025742e-01
+
+# Counting NAs (missing data)
 
 ``` r
 ##########################
@@ -1184,107 +2007,188 @@ head(nasCount) %>% kable()
 ```
 
 <table>
+
 <thead>
+
 <tr>
+
 <th style="text-align:left;">
+
 </th>
+
 <th style="text-align:right;">
+
 NAs\_proc
+
 </th>
+
 <th style="text-align:left;">
+
 field\_name
+
 </th>
+
 </tr>
+
 </thead>
+
 <tbody>
+
 <tr>
+
 <td style="text-align:left;">
+
 WITTERUNG - Luftfeuchtigkeit - Mittlere relative Luftfeuchtigkeit
+
 </td>
+
 <td style="text-align:right;">
-0.0084746
+
+0.0042017
+
 </td>
+
 <td style="text-align:left;">
+
 WITTERUNG - Luftfeuchtigkeit - Mittlere relative Luftfeuchtigkeit
+
 </td>
+
 </tr>
+
 <tr>
+
 <td style="text-align:left;">
+
 WITTERUNG - Lufttemperatur - Höchste Lufttemperatur
+
 </td>
+
 <td style="text-align:right;">
-0.0084746
+
+0.0042017
+
 </td>
+
 <td style="text-align:left;">
+
 WITTERUNG - Lufttemperatur - Höchste Lufttemperatur
+
 </td>
+
 </tr>
+
 <tr>
+
 <td style="text-align:left;">
+
 WITTERUNG - Lufttemperatur - Mittlere Lufttemperatur
+
 </td>
+
 <td style="text-align:right;">
-0.0084746
+
+0.0042017
+
 </td>
+
 <td style="text-align:left;">
+
 WITTERUNG - Lufttemperatur - Mittlere Lufttemperatur
+
 </td>
+
 </tr>
+
 <tr>
+
 <td style="text-align:left;">
+
 WITTERUNG - Lufttemperatur - Tiefste Lufttemperatur
+
 </td>
+
 <td style="text-align:right;">
-0.0084746
+
+0.0042017
+
 </td>
+
 <td style="text-align:left;">
+
 WITTERUNG - Lufttemperatur - Tiefste Lufttemperatur
+
 </td>
+
 </tr>
+
 <tr>
+
 <td style="text-align:left;">
+
 WITTERUNG - Niederschlag - Niederschlagsmenge insgesamt
+
 </td>
+
 <td style="text-align:right;">
-0.0084746
+
+0.0042017
+
 </td>
+
 <td style="text-align:left;">
+
 WITTERUNG - Niederschlag - Niederschlagsmenge insgesamt
+
 </td>
+
 </tr>
+
 <tr>
+
 <td style="text-align:left;">
+
 WITTERUNG - Niederschlag - Tage mit Niederschlägen
+
 </td>
+
 <td style="text-align:right;">
-0.0084746
+
+0.0042017
+
 </td>
+
 <td style="text-align:left;">
+
 WITTERUNG - Niederschlag - Tage mit Niederschlägen
+
 </td>
+
 </tr>
+
 </tbody>
+
 </table>
+
 ``` r
 nasFinal <- data.frame("field_name" =  nasCount$field_name, "NAs_proc" = nasCount$NAs_proc)
 plot(nasFinal$NAs_proc, main="Percent of missing values for all variables")
 abline(h=0.1, col="blue")
 ```
 
-![](Munich_numbers_files/figure-markdown_github/prepare_count_of_NAs-1.jpeg)
+![](Munich_numbers_files/figure-gfm/prepare_count_of_NAs-1.jpeg)<!-- -->
 
 ``` r
 rm(nasCount)
 ##########################
 ```
 
-we will **cut all variables filled below 10%** (so all above the blue line).
+we will **cut all variables filled below 10%** (so all above the blue
+line).
 
-Explore correlations
-====================
+# Explore correlations
 
-simple use of cor()
--------------------
+## simple use of cor()
 
 ``` r
 ##########################
@@ -1296,33 +2200,33 @@ dsCor[1:5, 1:5]
 
     ##                                                                   WITTERUNG - Luftfeuchtigkeit - Mittlere relative Luftfeuchtigkeit
     ## WITTERUNG - Luftfeuchtigkeit - Mittlere relative Luftfeuchtigkeit                                                        1.00000000
-    ## WITTERUNG - Lufttemperatur - Höchste Lufttemperatur                                                                     -0.64793440
-    ## WITTERUNG - Lufttemperatur - Mittlere Lufttemperatur                                                                    -0.62228448
-    ## WITTERUNG - Lufttemperatur - Tiefste Lufttemperatur                                                                     -0.51313290
-    ## WITTERUNG - Niederschlag - Niederschlagsmenge insgesamt                                                                 -0.08243451
+    ## WITTERUNG - Lufttemperatur - Höchste Lufttemperatur                                                                     -0.65062004
+    ## WITTERUNG - Lufttemperatur - Mittlere Lufttemperatur                                                                    -0.62471442
+    ## WITTERUNG - Lufttemperatur - Tiefste Lufttemperatur                                                                     -0.51735459
+    ## WITTERUNG - Niederschlag - Niederschlagsmenge insgesamt                                                                 -0.08981829
     ##                                                                   WITTERUNG - Lufttemperatur - Höchste Lufttemperatur
-    ## WITTERUNG - Luftfeuchtigkeit - Mittlere relative Luftfeuchtigkeit                                          -0.6479344
+    ## WITTERUNG - Luftfeuchtigkeit - Mittlere relative Luftfeuchtigkeit                                          -0.6506200
     ## WITTERUNG - Lufttemperatur - Höchste Lufttemperatur                                                         1.0000000
-    ## WITTERUNG - Lufttemperatur - Mittlere Lufttemperatur                                                        0.9586386
-    ## WITTERUNG - Lufttemperatur - Tiefste Lufttemperatur                                                         0.9037555
-    ## WITTERUNG - Niederschlag - Niederschlagsmenge insgesamt                                                     0.4353042
+    ## WITTERUNG - Lufttemperatur - Mittlere Lufttemperatur                                                        0.9591961
+    ## WITTERUNG - Lufttemperatur - Tiefste Lufttemperatur                                                         0.9053772
+    ## WITTERUNG - Niederschlag - Niederschlagsmenge insgesamt                                                     0.4423575
     ##                                                                   WITTERUNG - Lufttemperatur - Mittlere Lufttemperatur
-    ## WITTERUNG - Luftfeuchtigkeit - Mittlere relative Luftfeuchtigkeit                                           -0.6222845
-    ## WITTERUNG - Lufttemperatur - Höchste Lufttemperatur                                                          0.9586386
+    ## WITTERUNG - Luftfeuchtigkeit - Mittlere relative Luftfeuchtigkeit                                           -0.6247144
+    ## WITTERUNG - Lufttemperatur - Höchste Lufttemperatur                                                          0.9591961
     ## WITTERUNG - Lufttemperatur - Mittlere Lufttemperatur                                                         1.0000000
-    ## WITTERUNG - Lufttemperatur - Tiefste Lufttemperatur                                                          0.9581775
-    ## WITTERUNG - Niederschlag - Niederschlagsmenge insgesamt                                                      0.4822358
+    ## WITTERUNG - Lufttemperatur - Tiefste Lufttemperatur                                                          0.9588136
+    ## WITTERUNG - Niederschlag - Niederschlagsmenge insgesamt                                                      0.4885477
     ##                                                                   WITTERUNG - Lufttemperatur - Tiefste Lufttemperatur
-    ## WITTERUNG - Luftfeuchtigkeit - Mittlere relative Luftfeuchtigkeit                                          -0.5131329
-    ## WITTERUNG - Lufttemperatur - Höchste Lufttemperatur                                                         0.9037555
-    ## WITTERUNG - Lufttemperatur - Mittlere Lufttemperatur                                                        0.9581775
+    ## WITTERUNG - Luftfeuchtigkeit - Mittlere relative Luftfeuchtigkeit                                          -0.5173546
+    ## WITTERUNG - Lufttemperatur - Höchste Lufttemperatur                                                         0.9053772
+    ## WITTERUNG - Lufttemperatur - Mittlere Lufttemperatur                                                        0.9588136
     ## WITTERUNG - Lufttemperatur - Tiefste Lufttemperatur                                                         1.0000000
-    ## WITTERUNG - Niederschlag - Niederschlagsmenge insgesamt                                                     0.5078810
+    ## WITTERUNG - Niederschlag - Niederschlagsmenge insgesamt                                                     0.5140762
     ##                                                                   WITTERUNG - Niederschlag - Niederschlagsmenge insgesamt
-    ## WITTERUNG - Luftfeuchtigkeit - Mittlere relative Luftfeuchtigkeit                                             -0.08243451
-    ## WITTERUNG - Lufttemperatur - Höchste Lufttemperatur                                                            0.43530416
-    ## WITTERUNG - Lufttemperatur - Mittlere Lufttemperatur                                                           0.48223577
-    ## WITTERUNG - Lufttemperatur - Tiefste Lufttemperatur                                                            0.50788102
+    ## WITTERUNG - Luftfeuchtigkeit - Mittlere relative Luftfeuchtigkeit                                             -0.08981829
+    ## WITTERUNG - Lufttemperatur - Höchste Lufttemperatur                                                            0.44235752
+    ## WITTERUNG - Lufttemperatur - Mittlere Lufttemperatur                                                           0.48854773
+    ## WITTERUNG - Lufttemperatur - Tiefste Lufttemperatur                                                            0.51407618
     ## WITTERUNG - Niederschlag - Niederschlagsmenge insgesamt                                                        1.00000000
 
 ``` r
@@ -1339,8 +2243,7 @@ length(col_has_over_90)
 #( dsCor[,col_has_over_90] )
 ```
 
-the correlate package
----------------------
+## the correlate package
 
 ``` r
 library(corrr)
@@ -1354,16 +2257,16 @@ correlate(dsFinal, use = "pairwise.complete.obs")
     ## # A tibble: 288 x 289
     ##    rowname `WITTERUNG - Lu~ `WITTERUNG - Lu~ `WITTERUNG - Lu~
     ##    <chr>              <dbl>            <dbl>            <dbl>
-    ##  1 WITTER~          NA               -0.648         -0.622   
-    ##  2 WITTER~          -0.648           NA              0.959   
-    ##  3 WITTER~          -0.622            0.959         NA       
-    ##  4 WITTER~          -0.513            0.904          0.958   
-    ##  5 WITTER~          -0.0824           0.435          0.482   
-    ##  6 WITTER~           0.260           -0.0987        -0.0835  
-    ##  7 WITTER~          -0.823            0.830          0.845   
-    ##  8 WIRTSC~           0.0399          -0.0270        -0.000122
-    ##  9 WIRTSC~          -0.0729          -0.0955        -0.0721  
-    ## 10 WIRTSC~          -0.161            0.221          0.250   
+    ##  1 WITTER~          NA              -0.651            -0.625 
+    ##  2 WITTER~          -0.651          NA                 0.959 
+    ##  3 WITTER~          -0.625           0.959            NA     
+    ##  4 WITTER~          -0.517           0.905             0.959 
+    ##  5 WITTER~          -0.0898          0.442             0.489 
+    ##  6 WITTER~           0.257          -0.0969           -0.0821
+    ##  7 WITTER~          -0.823           0.832             0.847 
+    ##  8 WIRTSC~           0.0196          0.00636           0.0359
+    ##  9 WIRTSC~          -0.125          -0.0104            0.0165
+    ## 10 WIRTSC~          -0.209           0.279             0.310 
     ## # ... with 278 more rows, and 285 more variables: `WITTERUNG -
     ## #   Lufttemperatur - Tiefste Lufttemperatur` <dbl>, `WITTERUNG -
     ## #   Niederschlag - Niederschlagsmenge insgesamt` <dbl>, `WITTERUNG -
@@ -1490,22 +2393,22 @@ dsFinal %>%
     ##  2 WIRTSCHAFT - Handwerksbetrieb~ BEVÖLKERUNG - Haushalte nach Kind~ -0.982
     ##  3 WIRTSCHAFT - Handwerksbetrieb~ WIRTSCHAFT - Handwerksbetriebe - ~  0.991
     ##  4 WIRTSCHAFT - Handwerksbetrieb~ WIRTSCHAFT - Handwerksbetriebe - ~  0.990
-    ##  5 WIRTSCHAFT - Handwerksbetrieb~ SOZIALE LEISTUNGEN - Empfänger na~  0.981
-    ##  6 WIRTSCHAFT - Handwerksbetrieb~ SOZIALE LEISTUNGEN - Empfänger na~  0.982
-    ##  7 WIRTSCHAFT - Handwerksbetrieb~ SOZIALE LEISTUNGEN - Grundsicheru~  0.984
-    ##  8 WIRTSCHAFT - Handwerksbetrieb~ SOZIALE LEISTUNGEN - Grundsicheru~  0.982
-    ##  9 WIRTSCHAFT - Handwerksbetrieb~ SOZIALE LEISTUNGEN - Grundsicheru~  0.984
-    ## 10 WIRTSCHAFT - Handwerksbetrieb~ KFZ-Bestand - Pkw-Kraftstoffarten~  0.981
-    ## 11 WIRTSCHAFT - Handwerksbetrieb~ BEVÖLKERUNG - EU-Nationalitäten -~  0.985
-    ## 12 WIRTSCHAFT - Handwerksbetrieb~ BEVÖLKERUNG - Familienstand - led~  0.980
-    ## 13 WIRTSCHAFT - Handwerksbetrieb~ BEVÖLKERUNG - Geschlecht und Staa~  0.981
-    ## 14 WIRTSCHAFT - Handwerksbetrieb~ BEVÖLKERUNG - Geschlecht und Staa~  0.981
-    ## 15 WIRTSCHAFT - Handwerksbetrieb~ BEVÖLKERUNG - Nicht-EU-Nationalit~ -0.982
-    ## 16 WIRTSCHAFT - Handwerksbetrieb~ BEVÖLKERUNG - Religionszugehörigk~  0.981
-    ## 17 WIRTSCHAFT - Handwerksbetrieb~ WIRTSCHAFT - Handwerksbetriebe - ~  0.990
-    ## 18 WIRTSCHAFT - Verarbeitendes G~ WIRTSCHAFT - Verarbeitendes Gewer~  0.986
-    ## 19 WIRTSCHAFT - Verarbeitendes G~ WIRTSCHAFT - Verarbeitendes Gewer~  0.986
-    ## 20 VERKEHRSUNFÄLLE - Verkehrsunf~ VERKEHRSUNFÄLLE - Verkehrsunfälle~  0.981
+    ##  5 WIRTSCHAFT - Handwerksbetrieb~ BEVÖLKERUNG - Altersgruppen - Noc~  0.980
+    ##  6 WIRTSCHAFT - Handwerksbetrieb~ BEVÖLKERUNG - EU-Nationalitäten -~  0.985
+    ##  7 WIRTSCHAFT - Handwerksbetrieb~ BEVÖLKERUNG - Familienstand - led~  0.981
+    ##  8 WIRTSCHAFT - Handwerksbetrieb~ BEVÖLKERUNG - Geschlecht und Staa~  0.981
+    ##  9 WIRTSCHAFT - Handwerksbetrieb~ BEVÖLKERUNG - Geschlecht und Staa~  0.981
+    ## 10 WIRTSCHAFT - Handwerksbetrieb~ BEVÖLKERUNG - Geschlecht und Staa~  0.981
+    ## 11 WIRTSCHAFT - Handwerksbetrieb~ BEVÖLKERUNG - Haushalte nach Kind~  0.981
+    ## 12 WIRTSCHAFT - Handwerksbetrieb~ BEVÖLKERUNG - Nicht-EU-Nationalit~ -0.983
+    ## 13 WIRTSCHAFT - Handwerksbetrieb~ BEVÖLKERUNG - Religionszugehörigk~  0.982
+    ## 14 WIRTSCHAFT - Handwerksbetrieb~ WIRTSCHAFT - Handwerksbetriebe - ~  0.990
+    ## 15 WIRTSCHAFT - Verarbeitendes G~ WIRTSCHAFT - Verarbeitendes Gewer~  0.985
+    ## 16 WIRTSCHAFT - Verarbeitendes G~ BEVÖLKERUNG - Haushalte nach Kind~  0.980
+    ## 17 WIRTSCHAFT - Verarbeitendes G~ WIRTSCHAFT - Verarbeitendes Gewer~  0.985
+    ## 18 VERKEHRSUNFÄLLE - Verkehrsunf~ VERKEHRSUNFÄLLE - Verkehrsunfälle~  0.981
+    ## 19 VERKEHRSUNFÄLLE - Verkehrsunf~ VERKEHRSUNFÄLLE - Verkehrsunfälle~  0.981
+    ## 20 TOURISMUS - Gäste - Ausland    TOURISMUS - Übernachtungen - Ausl~  0.993
 
 ``` r
 # how many does each correlate with
@@ -1527,26 +2430,26 @@ dsFinal %>%
     ## # Groups:   x [20]
     ##    x                                                                      n
     ##    <chr>                                                              <int>
-    ##  1 BEVÖLKERUNG - Familienstand - ledig                                   29
-    ##  2 BEVÖLKERUNG - Religionszugehörigkeit - sonstige/ ohne/ ohne Angabe    29
-    ##  3 BEVÖLKERUNG - Geschlecht und Staatsangehörigkeit - Ausländer weib~    28
-    ##  4 BEVÖLKERUNG - Altersgruppen - Minderjährige (unter 18 J.)             27
-    ##  5 BEVÖLKERUNG - EU-Nationalitäten - Bulgarien                           27
-    ##  6 BEVÖLKERUNG - Geschlecht und Staatsangehörigkeit - Einwohner/inne~    27
-    ##  7 BEVÖLKERUNG - Geschlecht und Staatsangehörigkeit - Einwohner weib~    26
-    ##  8 BEVÖLKERUNG - Altersgruppen - Noch nicht Schulpflichtige (unter 6~    25
-    ##  9 SOZIALE LEISTUNGEN - Grundsicherung im Alter und bei Erwerbsminde~    25
-    ## 10 SOZIALE LEISTUNGEN - Grundsicherung im Alter und bei Erwerbsminde~    24
-    ## 11 BEVÖLKERUNG - Altersgruppen - Strafmündige (14 J. und älter)          23
-    ## 12 BEVÖLKERUNG - Geschlecht und Staatsangehörigkeit - Einwohner männ~    23
-    ## 13 SOZIALE LEISTUNGEN - Grundsicherung im Alter und bei Erwerbsminde~    23
-    ## 14 BEVÖLKERUNG - Altersgruppen - Erwerbsfähige (15- 64 J.)               22
-    ## 15 BEVÖLKERUNG - Altersgruppen - Volljährige (18 J. und älter)           22
-    ## 16 BEVÖLKERUNG - Haushalte nach Nationengruppe - deutsch - ausländis~    22
-    ## 17 BEVÖLKERUNG - Altersgruppen - Schulpflichtige (6- 14 J.)              21
-    ## 18 BEVÖLKERUNG - Haushalte nach Kinderzahl - mit 1 Kind                  21
-    ## 19 BEVÖLKERUNG - Kontinente - Amerika                                    21
-    ## 20 SOZIALE LEISTUNGEN - Empfänger nach SGB XII - Männer                  21
+    ##  1 BEVÖLKERUNG - Geschlecht und Staatsangehörigkeit - Ausländer weib~    28
+    ##  2 BEVÖLKERUNG - Altersgruppen - Minderjährige (unter 18 J.)             26
+    ##  3 BEVÖLKERUNG - Familienstand - ledig                                   26
+    ##  4 BEVÖLKERUNG - Geschlecht und Staatsangehörigkeit - Einwohner weib~    26
+    ##  5 BEVÖLKERUNG - Religionszugehörigkeit - sonstige/ ohne/ ohne Angabe    26
+    ##  6 BEVÖLKERUNG - Altersgruppen - Noch nicht Schulpflichtige (unter 6~    25
+    ##  7 BEVÖLKERUNG - EU-Nationalitäten - Bulgarien                           24
+    ##  8 BEVÖLKERUNG - Geschlecht und Staatsangehörigkeit - Einwohner/inne~    24
+    ##  9 BEVÖLKERUNG - Geschlecht und Staatsangehörigkeit - Einwohner männ~    23
+    ## 10 BEVÖLKERUNG - Haushalte nach Nationengruppe - deutsch - ausländis~    23
+    ## 11 BEVÖLKERUNG - Haushalte nach Kinderzahl - mit 1 Kind                  22
+    ## 12 SOZIALE LEISTUNGEN - Grundsicherung im Alter und bei Erwerbsminde~    22
+    ## 13 BEVÖLKERUNG - Altersgruppen - Erwerbsfähige (15- 64 J.)               21
+    ## 14 BEVÖLKERUNG - Altersgruppen - Strafmündige (14 J. und älter)          21
+    ## 15 BEVÖLKERUNG - Altersgruppen - Volljährige (18 J. und älter)           21
+    ## 16 SOZIALE LEISTUNGEN - Grundsicherung im Alter und bei Erwerbsminde~    21
+    ## 17 BEVÖLKERUNG - Haushalte nach Nationengruppe - ausländisch             20
+    ## 18 BEVÖLKERUNG - Haushalte nach Nationengruppe - insgesamt               20
+    ## 19 BEVÖLKERUNG - Kontinente - Amerika                                    20
+    ## 20 BEVÖLKERUNG - Altersgruppen - Schulpflichtige (6- 14 J.)              19
 
 ``` r
 # split the correlated variables by section/subsections
@@ -1571,10 +2474,10 @@ dsFinal %>%
 
     ##                     
     ##                      BEVÖLKERUNG KFZ-Bestand SOZIALE LEISTUNGEN WIRTSCHAFT
-    ##   BEVÖLKERUNG                  0          33                 78          7
-    ##   KFZ-Bestand                 33           0                  8          1
-    ##   SOZIALE LEISTUNGEN          78           8                  0          5
-    ##   WIRTSCHAFT                   7           1                  5          0
+    ##   BEVÖLKERUNG                  0          29                 44         11
+    ##   KFZ-Bestand                 29           0                  7          0
+    ##   SOZIALE LEISTUNGEN          44           7                  0          0
+    ##   WIRTSCHAFT                  11           0                  0          0
 
 ``` r
 # dsFinal %>% 
@@ -1590,53 +2493,51 @@ dsAgg %>%
 (dsAggFiltered)
 ```
 
-    ## # A tibble: 108 x 4
+    ## # A tibble: 77 x 4
     ##    x_field                      y_field                          r NAs_proc
     ##    <chr>                        <chr>                        <dbl>    <dbl>
-    ##  1 BEVÖLKERUNG - Altersgruppen~ SOZIALE LEISTUNGEN - Grunds~ 0.982  0.00847
-    ##  2 BEVÖLKERUNG - Altersgruppen~ SOZIALE LEISTUNGEN - Grunds~ 0.981  0.00847
-    ##  3 BEVÖLKERUNG - Altersgruppen~ SOZIALE LEISTUNGEN - Empfän~ 0.991  0.00847
-    ##  4 BEVÖLKERUNG - Altersgruppen~ SOZIALE LEISTUNGEN - Empfän~ 0.981  0.00847
-    ##  5 BEVÖLKERUNG - Altersgruppen~ SOZIALE LEISTUNGEN - Grunds~ 0.990  0.00847
-    ##  6 BEVÖLKERUNG - Altersgruppen~ KFZ-Bestand - Fahrzeugtypen~ 0.985  0.00847
-    ##  7 BEVÖLKERUNG - Altersgruppen~ SOZIALE LEISTUNGEN - Empfän~ 0.992  0.00847
-    ##  8 BEVÖLKERUNG - Altersgruppen~ SOZIALE LEISTUNGEN - Empfän~ 0.981  0.00847
-    ##  9 BEVÖLKERUNG - Altersgruppen~ SOZIALE LEISTUNGEN - Grunds~ 0.989  0.00847
-    ## 10 BEVÖLKERUNG - Altersgruppen~ SOZIALE LEISTUNGEN - Empfän~ 0.981  0.00847
-    ## # ... with 98 more rows
+    ##  1 BEVÖLKERUNG - Altersgruppen~ SOZIALE LEISTUNGEN - Grunds~ 0.981  0.00420
+    ##  2 BEVÖLKERUNG - Altersgruppen~ SOZIALE LEISTUNGEN - Empfän~ 0.987  0.00420
+    ##  3 BEVÖLKERUNG - Altersgruppen~ SOZIALE LEISTUNGEN - Grunds~ 0.984  0.00420
+    ##  4 BEVÖLKERUNG - Altersgruppen~ KFZ-Bestand - Fahrzeugtypen~ 0.986  0.00420
+    ##  5 BEVÖLKERUNG - Altersgruppen~ WIRTSCHAFT - Handwerksbetri~ 0.980  0.00420
+    ##  6 BEVÖLKERUNG - Altersgruppen~ SOZIALE LEISTUNGEN - Empfän~ 0.988  0.00420
+    ##  7 BEVÖLKERUNG - Altersgruppen~ SOZIALE LEISTUNGEN - Grunds~ 0.983  0.00420
+    ##  8 BEVÖLKERUNG - Altersgruppen~ SOZIALE LEISTUNGEN - Empfän~ 0.982  0.00420
+    ##  9 BEVÖLKERUNG - Altersgruppen~ SOZIALE LEISTUNGEN - Grunds~ 0.982  0.00420
+    ## 10 BEVÖLKERUNG - Altersgruppen~ SOZIALE LEISTUNGEN - Grunds~ 0.987  0.00420
+    ## # ... with 67 more rows
 
 ``` r
 ##########################
 ```
 
-Next steps
-==========
+# Next steps
 
--   we look at cross-topic correlations (assuming that inter-topic correlations are logical: highest to lowest temperature f.e.)
--   explore some highly correlated numbers
--   **BEWARE OF CONFOUNDING VARIABLES**
+  - we look at cross-topic correlations (assuming that inter-topic
+    correlations are logical: highest to lowest temperature f.e.)
+  - explore some highly correlated numbers
+  - **BEWARE OF CONFOUNDING VARIABLES**
 
-Highly Correlated variables
----------------------------
+## Highly Correlated variables
 
-These are pure sample examples out of ~100
+These are pure sample examples out of \~100
 
 ``` r
 plot(dsFinal$`BEVÖLKERUNG - Altersgruppen - Rentner/innen (65 J. und älter)`, dsFinal$`SOZIALE LEISTUNGEN - Empfänger nach SGB XII - Empfänger/innen insges.`,
      main="Old-age pensioner and social welfare recipients")
 ```
 
-![](Munich_numbers_files/figure-markdown_github/prepare_correlation_charts-1.jpeg)
+![](Munich_numbers_files/figure-gfm/prepare_correlation_charts-1.jpeg)<!-- -->
 
 ``` r
 plot(dsFinal$`BEVÖLKERUNG - Familienstand - geschieden`, dsFinal$`KFZ-Bestand - Pkw-Kraftstoffarten - Diesel gesamt`,
      main="Divorces and Diesel cars")
 ```
 
-![](Munich_numbers_files/figure-markdown_github/prepare_correlation_charts-2.jpeg)
+![](Munich_numbers_files/figure-gfm/prepare_correlation_charts-2.jpeg)<!-- -->
 
-linear models
--------------
+## linear models
 
 Handworkers by number of diesel cars and total population
 
@@ -1653,41 +2554,41 @@ summary(model.lm)
     ## 
     ## Residuals:
     ##     Min      1Q  Median      3Q     Max 
-    ## -163.29  -75.10   23.08   65.65  140.01 
+    ## -164.59  -75.29   23.49   63.60  141.46 
     ## 
     ## Coefficients:
     ##                                                                                  Estimate
-    ## (Intercept)                                                                    -7.815e+02
-    ## `KFZ-Bestand - Pkw-Kraftstoffarten - Diesel gesamt`                             1.416e-03
-    ## `BEVÖLKERUNG - Geschlecht und Staatsangehörigkeit - Einwohner/innen insgesamt`  3.978e-03
+    ## (Intercept)                                                                    -9.890e+02
+    ## `KFZ-Bestand - Pkw-Kraftstoffarten - Diesel gesamt`                             1.067e-03
+    ## `BEVÖLKERUNG - Geschlecht und Staatsangehörigkeit - Einwohner/innen insgesamt`  4.181e-03
     ##                                                                                Std. Error
-    ## (Intercept)                                                                     3.665e+02
-    ## `KFZ-Bestand - Pkw-Kraftstoffarten - Diesel gesamt`                             6.676e-04
-    ## `BEVÖLKERUNG - Geschlecht und Staatsangehörigkeit - Einwohner/innen insgesamt`  3.615e-04
+    ## (Intercept)                                                                     3.334e+02
+    ## `KFZ-Bestand - Pkw-Kraftstoffarten - Diesel gesamt`                             6.162e-04
+    ## `BEVÖLKERUNG - Geschlecht und Staatsangehörigkeit - Einwohner/innen insgesamt`  3.294e-04
     ##                                                                                t value
-    ## (Intercept)                                                                     -2.132
-    ## `KFZ-Bestand - Pkw-Kraftstoffarten - Diesel gesamt`                              2.121
-    ## `BEVÖLKERUNG - Geschlecht und Staatsangehörigkeit - Einwohner/innen insgesamt`  11.006
+    ## (Intercept)                                                                     -2.967
+    ## `KFZ-Bestand - Pkw-Kraftstoffarten - Diesel gesamt`                              1.731
+    ## `BEVÖLKERUNG - Geschlecht und Staatsangehörigkeit - Einwohner/innen insgesamt`  12.690
     ##                                                                                Pr(>|t|)
-    ## (Intercept)                                                                      0.0344
-    ## `KFZ-Bestand - Pkw-Kraftstoffarten - Diesel gesamt`                              0.0354
-    ## `BEVÖLKERUNG - Geschlecht und Staatsangehörigkeit - Einwohner/innen insgesamt`   <2e-16
+    ## (Intercept)                                                                     0.00344
+    ## `KFZ-Bestand - Pkw-Kraftstoffarten - Diesel gesamt`                             0.08524
+    ## `BEVÖLKERUNG - Geschlecht und Staatsangehörigkeit - Einwohner/innen insgesamt`  < 2e-16
     ##                                                                                   
-    ## (Intercept)                                                                    *  
-    ## `KFZ-Bestand - Pkw-Kraftstoffarten - Diesel gesamt`                            *  
+    ## (Intercept)                                                                    ** 
+    ## `KFZ-Bestand - Pkw-Kraftstoffarten - Diesel gesamt`                            .  
     ## `BEVÖLKERUNG - Geschlecht und Staatsangehörigkeit - Einwohner/innen insgesamt` ***
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
     ## 
-    ## Residual standard error: 81.89 on 169 degrees of freedom
-    ##   (64 observations deleted due to missingness)
-    ## Multiple R-squared:  0.9617, Adjusted R-squared:  0.9613 
-    ## F-statistic:  2123 on 2 and 169 DF,  p-value: < 2.2e-16
+    ## Residual standard error: 81.65 on 172 degrees of freedom
+    ##   (63 observations deleted due to missingness)
+    ## Multiple R-squared:  0.9627, Adjusted R-squared:  0.9623 
+    ## F-statistic:  2220 on 2 and 172 DF,  p-value: < 2.2e-16
 
 ``` r
 plot(model.lm)
 ```
 
-![](Munich_numbers_files/figure-markdown_github/prepare_linear_models-1.jpeg)![](Munich_numbers_files/figure-markdown_github/prepare_linear_models-2.jpeg)![](Munich_numbers_files/figure-markdown_github/prepare_linear_models-3.jpeg)![](Munich_numbers_files/figure-markdown_github/prepare_linear_models-4.jpeg)
+![](Munich_numbers_files/figure-gfm/prepare_linear_models-1.jpeg)<!-- -->![](Munich_numbers_files/figure-gfm/prepare_linear_models-2.jpeg)<!-- -->![](Munich_numbers_files/figure-gfm/prepare_linear_models-3.jpeg)<!-- -->![](Munich_numbers_files/figure-gfm/prepare_linear_models-4.jpeg)<!-- -->
 
 :)
